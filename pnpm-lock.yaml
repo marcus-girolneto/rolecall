@@ -135,7 +135,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/cli
 
-  examples/loja-agent:
+  examples/store-agent:
     dependencies:
       '@rolecall/ai-sdk':
         specifier: workspace:*

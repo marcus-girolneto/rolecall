@@ -61,6 +61,8 @@ export interface RunsRepository {
   list(orgId: string, query: ListRunsQuery): Promise<RunSummaryRecord[]>;
   findBaseline(orgId: string, query: BaselineQuery): Promise<RunRecord | null>;
   delete(orgId: string, id: string): Promise<boolean>;
+  /** Deletes the org's runs received before `cutoff`. Returns how many were deleted. */
+  deleteReceivedBefore(orgId: string, cutoff: Date): Promise<number>;
 }
 
 const summaryColumns = {
@@ -164,6 +166,14 @@ export class DrizzleRunsRepository implements RunsRepository {
       .orderBy(desc(runs.createdAt), desc(runs.id))
       .limit(1);
     return row ?? null;
+  }
+
+  async deleteReceivedBefore(orgId: string, cutoff: Date): Promise<number> {
+    const rows = await this.db
+      .delete(runs)
+      .where(and(eq(runs.orgId, orgId), lt(runs.receivedAt, cutoff)))
+      .returning({ id: runs.id });
+    return rows.length;
   }
 
   async delete(orgId: string, id: string): Promise<boolean> {

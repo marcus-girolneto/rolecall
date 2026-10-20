@@ -1,4 +1,4 @@
-# ADR 0004 — Re-verify every evidence bundle on the server
+# ADR 0004: Re-verify every evidence bundle on the server
 
 - Status: accepted
 - Date: 2026-10-19

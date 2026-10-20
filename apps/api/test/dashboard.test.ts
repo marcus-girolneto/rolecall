@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { DashboardPage } from '../src/modules/dashboard/page.js';
-import { createTestApp, type TestContext } from './helpers.js';
+import { createTestApp, makeBundle, type TestContext } from './helpers.js';
 
 const TEMPLATE =
   '<!doctype html><html><head><!--rolecall:bootstrap--><script type="module">console.log("app")</script></head><body></body></html>';
@@ -43,6 +43,35 @@ describe('hosted dashboard', () => {
       expect(res.json()).toMatchObject({ error: { code: 'dashboard_unavailable' } });
     } finally {
       await bare.close();
+    }
+  });
+});
+
+describe('plan retention', () => {
+  it('deletes runs older than the plan allows when a new run arrives', async () => {
+    let now = new Date('2026-10-01T12:00:00Z');
+    const t = await createTestApp({}, { clock: { now: () => now } });
+    try {
+      const signup = await t.app.inject({
+        method: 'POST',
+        url: '/v1/signup',
+        payload: { orgName: 'Keeper', email: 'keeper@example.com' },
+      });
+      const key = { authorization: `Bearer ${signup.json().apiKey.key}` };
+      const upload = async (buggy: boolean) =>
+        t.app.inject({ method: 'POST', url: '/v1/runs', headers: key, payload: await makeBundle({ buggy }) });
+      const first = (await upload(false)).json().id;
+
+      now = new Date('2026-10-20T12:00:00Z'); // 19 days later; the free plan keeps 14
+      expect((await upload(true)).statusCode).toBe(201);
+
+      const ids = (await t.app.inject({ method: 'GET', url: '/v1/runs', headers: key }))
+        .json()
+        .runs.map((r: { id: string }) => r.id);
+      expect(ids).toHaveLength(1);
+      expect(ids).not.toContain(first);
+    } finally {
+      await t.close();
     }
   });
 });

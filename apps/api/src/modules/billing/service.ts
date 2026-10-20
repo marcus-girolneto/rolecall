@@ -1,6 +1,6 @@
 import type { AuthContext } from '../../shared/auth.js';
 import { billingPeriod, type Clock } from '../../shared/clock.js';
-import { notFound } from '../../shared/errors.js';
+import { AppError, notFound } from '../../shared/errors.js';
 import type { OrganizationsRepository } from '../organizations/repository.js';
 import type { ProjectsRepository } from '../projects/repository.js';
 import type { BillingEvent, BillingGateway } from './gateway.js';
@@ -51,6 +51,13 @@ export class BillingService {
     const { orgs, gateway, publicUrl } = this.deps;
     const org = await orgs.findById(auth.orgId);
     if (!org) throw notFound('Organization');
+    // A second checkout would start a second subscription and leave the first one billing.
+    if (org.stripeSubscriptionId) {
+      throw new AppError(
+        'conflict',
+        'This organization already has a subscription. Change or cancel it in Stripe before starting a new checkout.',
+      );
+    }
     const url = await gateway.createCheckoutSession({
       orgId: org.id,
       plan: input.plan,
@@ -84,6 +91,9 @@ export class BillingService {
     switch (event.type) {
       case 'checkout.session.completed': {
         if (!event.orgId || !isPlanId(event.plan)) return;
+        // Delayed payment methods complete checkout before the money arrives. The plan is then applied by
+        // customer.subscription.updated once the subscription becomes active.
+        if (event.paymentStatus !== 'paid' && event.paymentStatus !== 'no_payment_required') return;
         const org = await orgs.findById(event.orgId);
         if (!org) return;
         await orgs.updateBilling(org.id, {
@@ -105,7 +115,8 @@ export class BillingService {
           const fromMeta = isPlanId(event.plan) ? event.plan : null;
           const fromPrice =
             event.priceIds.map((p) => gateway.planForPrice(p)).find((p) => p !== null) ?? null;
-          plan = fromMeta ?? fromPrice ?? planOf(org.plan).id;
+          // The price actually billed wins over metadata, so a plan change made in Stripe is respected.
+          plan = fromPrice ?? fromMeta ?? planOf(org.plan).id;
         }
         await orgs.updateBilling(org.id, {
           plan,

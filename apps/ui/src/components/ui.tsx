@@ -299,7 +299,7 @@ export function LayersExplainer() {
             <li key={r.layer} className="flex gap-2.5">
               <Icon size={15} className="mt-0.5 shrink-0 text-fg-3" aria-hidden />
               <span>
-                <span className="font-medium text-fg">{LAYER_LABEL[r.layer]}</span> — {r.text}
+                <span className="font-medium text-fg">{LAYER_LABEL[r.layer]}:</span> {r.text}
               </span>
             </li>
           );

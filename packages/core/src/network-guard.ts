@@ -29,12 +29,16 @@ export function blockNetwork(allowHosts: string[] = []): () => void {
   }) as typeof fetch;
 
   net.Socket.prototype.connect = function (this: net.Socket, ...args: unknown[]) {
-    const [first, second] = args;
+    // net.connect and http.request call socket.connect with one normalised array: [options, callback].
+    const normalised = Array.isArray(args[0]) ? (args[0] as unknown[]) : args;
+    const [first, second] = normalised;
     if (typeof first === 'object' && first !== null) {
       const opts = first as { path?: string; host?: string };
-      if (!opts.path) check(opts.host);
+      if (!opts.path) check(opts.host); // `path` = Unix socket or Windows pipe: local, allowed
     } else if (typeof first === 'number' || (typeof first === 'string' && /^\d+$/.test(first))) {
       check(typeof second === 'string' ? second : undefined);
+    } else if (typeof first === 'string') {
+      // socket.connect(path) for a Unix socket: local, allowed
     }
     return (originalConnect as (...a: unknown[]) => net.Socket).apply(this, args);
   } as typeof net.Socket.prototype.connect;

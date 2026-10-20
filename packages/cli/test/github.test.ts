@@ -89,7 +89,7 @@ describe('GitHub PR comment', () => {
     });
     expect(out.action).toBe('created');
     expect(gh.calls.map((c) => `${c.method} ${c.url}`)).toEqual([
-      'GET https://api.github.com/repos/acme/app/issues/7/comments?per_page=100',
+      'GET https://api.github.com/repos/acme/app/issues/7/comments?per_page=100&page=1',
       'POST https://api.github.com/repos/acme/app/issues/7/comments',
     ]);
   });
@@ -107,6 +107,17 @@ describe('GitHub PR comment', () => {
       method: 'PATCH',
       url: 'https://api.github.com/repos/acme/app/issues/comments/42',
     });
+  });
+
+  it("never edits a person's comment that quotes the marker", async () => {
+    const gh = fakeGitHub([{ id: 5, body: `I saw this: ${COMMENT_MARKER}` }]);
+    const out = await upsertPrComment({
+      pr,
+      token: 't',
+      body: `${COMMENT_MARKER}\nnew`,
+      fetchImpl: gh.fetchImpl,
+    });
+    expect(out.action).toBe('created');
   });
 
   it('explains a missing permission', async () => {

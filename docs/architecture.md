@@ -10,7 +10,7 @@ limits.
 
 ```mermaid
 C4Container
-  title Rolecall — container view
+  title Rolecall: container view
 
   Person(dev, "Engineer / CI pipeline", "Runs agent permission suites")
   Person(viewer, "Reviewer / auditor", "Reads history, regressions, evidence")
@@ -77,8 +77,9 @@ on the project's default branch with `compareRuns`. List and detail responses us
 
 ### Decisions
 
-- [ADR 0001 — Layered modular architecture](adr/0001-layered-architecture.md)
-- [ADR 0002 — Postgres + Drizzle, PGlite for dev/test](adr/0002-postgres-drizzle-pglite.md)
-- [ADR 0003 — API key authentication model](adr/0003-api-key-auth.md)
-- [ADR 0004 — Server-side re-verification of bundles](adr/0004-server-side-reverification.md)
-- [ADR 0005 — Plan limits and billing](adr/0005-plan-limits.md)
+- [ADR 0001: Layered modular architecture](adr/0001-layered-architecture.md)
+- [ADR 0002: Postgres + Drizzle, PGlite for dev/test](adr/0002-postgres-drizzle-pglite.md)
+- [ADR 0003: API key authentication model](adr/0003-api-key-auth.md)
+- [ADR 0004: Server-side re-verification of bundles](adr/0004-server-side-reverification.md)
+- [ADR 0005: Plan limits and billing](adr/0005-plan-limits.md)
+- [ADR 0006: Everything open source](adr/0006-open-core-licensing.md)

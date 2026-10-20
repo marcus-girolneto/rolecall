@@ -1,4 +1,4 @@
-# ADR 0005 — Plan limits and billing
+# ADR 0005: Plan limits and billing
 
 - Status: accepted (prices are hypotheses)
 - Date: 2026-10-19

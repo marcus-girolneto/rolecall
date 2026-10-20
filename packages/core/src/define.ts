@@ -100,10 +100,14 @@ export function validateSuite<Ctx, Id>(suite: SuiteDef<Ctx, Id>): void {
     suite.scenarios?.forEach((s, i) => {
       if (!roles.has(s.role)) problems.push(`scenarios.${i}.role: unknown role "${s.role}"`);
     });
-    const names = new Set<string>();
+    // Ids and recording files use the slug, so "Refund: order 1" and "refund order 1" would collide.
+    const slugs = new Map<string, string>();
     suite.scenarios?.forEach((s) => {
-      if (names.has(s.name)) problems.push(`scenarios: duplicate scenario name "${s.name}"`);
-      names.add(s.name);
+      const key = slugify(s.name);
+      const other = slugs.get(key);
+      if (other !== undefined)
+        problems.push(`scenarios: "${s.name}" and "${other}" are too similar; rename one`);
+      slugs.set(key, s.name);
     });
     if (!policyRules(suite).length && !suite.scenarios?.length)
       problems.push('suite: add a `permissions` table, a policy rule or a scenario');
@@ -125,4 +129,14 @@ export function policyRules<Ctx, Id>(suite: SuiteDef<Ctx, Id>): PolicyRule[] {
     }
   }
   return [...fromTable, ...(suite.policy ?? [])];
+}
+
+/** Same normalisation as test ids and recording file names. */
+function slugify(name: string): string {
+  return (
+    name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '') || 'unnamed'
+  );
 }

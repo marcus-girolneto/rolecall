@@ -131,6 +131,8 @@ export class RunsService {
       if (!winner) throw new AppError('conflict', 'Concurrent upload conflict; retry');
       return { id: winner.id, url: this.urlFor(winner.id), duplicate: true, created: false };
     }
+    // Plan retention, counted from when the Cloud received each run (the bundle's own date can't be trusted).
+    await runs.deleteReceivedBefore(auth.orgId, new Date(now.getTime() - plan.retentionDays * 86_400_000));
     return { id, url: this.urlFor(id), duplicate: false, created: true };
   }
 

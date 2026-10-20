@@ -13,7 +13,7 @@ inputs:
     description: Directory containing the suite and node_modules (rolecall must be a devDependency).
     default: .
   mode:
-    description: replay (default, offline) | record | live
+    description: replay (default, offline) | record | record-missing | live
     default: replay
   strict:
     description: Treat model-only-defense warnings as failures.

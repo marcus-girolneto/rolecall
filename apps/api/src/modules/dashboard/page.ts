@@ -27,9 +27,10 @@ export class DashboardPage {
       /[<\u2028\u2029]/g,
       (ch) => `\\u${ch.charCodeAt(0).toString(16).padStart(4, '0')}`,
     );
+    // A function replacement: run data may contain $&, $' or $` which a string replacement would expand.
     const html = this.template.replace(
       '<!--rolecall:bootstrap-->',
-      `<script>window.__ROLECALL__=${json}</script>`,
+      () => `<script>window.__ROLECALL__=${json}</script>`,
     );
     return { html, csp: cspFor(html) };
   }

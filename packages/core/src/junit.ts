@@ -23,7 +23,7 @@ export function toJUnit(result: RunResult): string {
               : '';
       return `    <testcase classname="${esc(`${result.suite.name}.${name}`)}" name="${esc(titleOf(t))}">${body}</testcase>`;
     });
-    return `  <testsuite name="${esc(`${result.suite.name} — ${name}`)}" tests="${tests.length}" failures="${failures}" errors="${errors}">\n${cases.join('\n')}\n  </testsuite>`;
+    return `  <testsuite name="${esc(`${result.suite.name}: ${name}`)}" tests="${tests.length}" failures="${failures}" errors="${errors}">\n${cases.join('\n')}\n  </testsuite>`;
   };
   return `<?xml version="1.0" encoding="UTF-8"?>\n<testsuites name="rolecall">\n${suite('policy', result.policy)}\n${suite('scenarios', result.scenarios)}\n</testsuites>\n`;
 }

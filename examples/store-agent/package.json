@@ -1,10 +1,10 @@
 {
-  "name": "loja-agent-example",
+  "name": "store-agent-example",
   "private": true,
   "type": "module",
-  "description": "Tutorial em portugu\u00eas: um chatbot de loja online para voc\u00ea testar com o Rolecall. Dados fict\u00edcios.",
+  "description": "Tutorial: an online store chatbot with a hidden permission bug, to test with Rolecall. Fictional data.",
   "scripts": {
-    "conversar": "tsx src/conversar.ts",
+    "chat": "tsx src/chat.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

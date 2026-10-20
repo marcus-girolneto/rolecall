@@ -227,15 +227,16 @@ function IntegrityCard({ detail }: { detail: RunDetail }) {
             Signed with key <code className="font-mono text-fg">{verify.keyId ?? 'unknown'}</code>
             {verify.trustedKey
               ? ', checked against your trusted public key.'
-              : '. Checked against the key embedded in the bundle; pass a trusted public key to pin the signer.'}
+              : '. That key came inside the bundle, and anyone who edits a bundle can re-sign it with a new key. Run rolecall verify --public-key with your own key to prove who signed it.'}
           </p>
         ) : (
           <p className="text-[13px] leading-relaxed text-fg-2">
-            <span className="font-medium text-fg">Unsigned</span> — detects accidental edits only; sign with{' '}
+            <span className="font-medium text-fg">Unsigned.</span> The hashes catch accidental edits, but
+            whoever edits the files can recompute them. Sign runs with{' '}
             <code className="rounded bg-surface-2 px-1 font-mono text-[12px] text-fg">
               ROLECALL_SIGNING_KEY
             </code>{' '}
-            for tamper evidence.
+            and verify them with your public key to catch deliberate edits.
           </p>
         )}
       </div>

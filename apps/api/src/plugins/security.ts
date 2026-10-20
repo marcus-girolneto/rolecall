@@ -4,6 +4,7 @@ import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
 import type { FastifyInstance } from 'fastify';
 import type { Env } from '../config/env.js';
+import { looksLikeApiKey } from '../shared/crypto.js';
 
 /** Helmet headers, CORS allow-list and per-key (or per-IP) rate limiting. */
 export async function registerSecurity(app: FastifyInstance, env: Env): Promise<void> {
@@ -19,9 +20,12 @@ export async function registerSecurity(app: FastifyInstance, env: Env): Promise<
     timeWindow: '1 minute',
     // Bucket by API key (hashed, never logged) so one noisy CI pipeline cannot starve an office NAT.
     keyGenerator: (req) => {
+      // Bucket by the API key itself, not the raw header: "Bearer x", "bearer x" and "Bearer  x" are one key.
+      // Anything that isn't a well-formed key falls back to the client IP, so random tokens can't dodge limits.
       const auth = req.headers.authorization;
-      return typeof auth === 'string' && auth
-        ? `k:${createHash('sha256').update(auth).digest('hex').slice(0, 32)}`
+      const token = typeof auth === 'string' ? /^Bearer\s+(\S+)\s*$/i.exec(auth)?.[1] : undefined;
+      return token && looksLikeApiKey(token)
+        ? `k:${createHash('sha256').update(token).digest('hex').slice(0, 32)}`
         : `ip:${req.ip}`;
     },
   });

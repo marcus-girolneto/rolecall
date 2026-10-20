@@ -136,26 +136,26 @@
     </div>
 
     <div class="panel" role="img" aria-label="Example Rolecall permission matrix with one violation">
-      <div class="panel-head"><span>Invoice support agent · permission matrix</span><span class="pill fail">1 violation</span></div>
+      <div class="panel-head"><span>Invoice support agent · permission matrix</span><span class="pill fail">1 problem</span></div>
       <div class="matrix">
         <div></div><div class="h">listInvoices</div><div class="h">refundInvoice</div><div class="h">deleteCustomer</div>
         <div class="r">viewer</div>
-        <div class="cell ok"><b>✓ allow</b><span>executed</span></div>
-        <div class="cell ok"><b>✓ deny</b><span>authz blocked</span></div>
-        <div class="cell ok"><b>✓ deny</b><span>authz blocked</span></div>
+        <div class="cell ok"><b>✓ allowed</b><span>ran</span></div>
+        <div class="cell ok"><b>✓ blocked</b><span>by your code</span></div>
+        <div class="cell ok"><b>✓ blocked</b><span>by your code</span></div>
         <div class="r">support</div>
-        <div class="cell ok"><b>✓ allow</b><span>executed</span></div>
-        <div class="cell bad"><b>✕ deny</b><span>executed!</span></div>
-        <div class="cell ok"><b>✓ deny</b><span>authz blocked</span></div>
+        <div class="cell ok"><b>✓ allowed</b><span>ran</span></div>
+        <div class="cell bad"><b>✕ problem</b><span>it ran</span></div>
+        <div class="cell ok"><b>✓ blocked</b><span>by your code</span></div>
         <div class="r">admin</div>
-        <div class="cell ok"><b>✓ allow</b><span>executed</span></div>
-        <div class="cell ok"><b>✓ allow</b><span>executed</span></div>
-        <div class="cell ok"><b>✓ allow</b><span>executed</span></div>
+        <div class="cell ok"><b>✓ allowed</b><span>ran</span></div>
+        <div class="cell ok"><b>✓ allowed</b><span>ran</span></div>
+        <div class="cell ok"><b>✓ allowed</b><span>ran</span></div>
       </div>
       <div class="finding">
         <span class="c">✕ support → refundInvoice (partial refund above limit)</span><br>
-        <span class="m">expected deny, the handler executed</span><br>
-        <span class="m">state</span> invoices.inv_1002.refundedCents: <span class="c">0</span> → <span class="g">45000</span>
+        <span class="m">should be blocked, but it ran</span><br>
+        <span class="m">data changed</span> invoices.inv_1002.refundedCents: <span class="c">0</span> → <span class="g">45000</span>
       </div>
     </div>
   </header>
@@ -164,21 +164,21 @@
 <section id="video">
   <div class="wrap">
     <h2>See it catch a permission bug.</h2>
-    <p class="sub">The demo agent lets a support user refund above their limit. Rolecall finds it, AI-written attacks try their luck, and the fix turns everything green. With an original soundtrack; also available <a href="rolecall-demo-pt.mp4">in Portuguese</a>.</p>
+    <p class="sub">The demo agent lets a support user refund above their limit. Rolecall finds it, AI-written attacks try their luck, and the fix turns everything green. </p>
     <video class="panel" style="width:100%;height:auto;display:block" src="rolecall-demo.mp4" poster="rolecall-thumbnail.png" controls muted playsinline preload="metadata"></video>
   </div>
 </section>
 
 <section>
   <div class="wrap">
-    <h2>A refusal is not a control.</h2>
-    <p class="sub">When an agent doesn't do something it shouldn't, Rolecall records <em>which layer</em> stopped it, then checks the layer that actually has to hold.</p>
+    <h2>Which layer stopped it?</h2>
+    <p class="sub">When an agent doesn't do something it shouldn't, Rolecall records what stopped it. Only one of these answers is safe.</p>
     <div class="grid3">
-      <div class="card"><span class="tag mint">authz_blocked</span><h3>Your code said no</h3><p>The agent tried and your authorization rejected it. This is the outcome you want, and it doesn't depend on the model.</p></div>
-      <div class="card"><span class="tag amber">model_refused</span><h3>The model said no</h3><p>The agent never tried. Rolecall then calls the tool directly as that role to check whether your code would also have refused.</p></div>
-      <div class="card"><span class="tag coral">executed</span><h3>Nothing said no</h3><p>The action happened. Rolecall fails the test and shows exactly what changed in your data, before and after.</p></div>
+      <div class="card"><span class="tag mint">blocked by your code</span><h3>Your code said no</h3><p>The agent tried and your permission check said no. This is the outcome you want, and it doesn't depend on the model.</p></div>
+      <div class="card"><span class="tag amber">AI refused</span><h3>The model said no</h3><p>The agent never tried. Rolecall then calls the tool directly as that role to check whether your code would also have refused.</p></div>
+      <div class="card"><span class="tag coral">ran</span><h3>Nothing said no</h3><p>The action happened. Rolecall fails the test and shows exactly what changed in your data, before and after.</p></div>
     </div>
-    <div class="callout"><strong>Model-only defense.</strong> When the model refuses but the direct call goes through, the only thing protecting that action is a prompt. Rolecall warns you, and <code>--strict</code> fails the build.</div>
+    <div class="callout"><strong>Only the AI is protecting this.</strong> When the model refuses but the direct call goes through, the action is one well-worded message away from happening. Rolecall warns you, and <code>--strict</code> fails the build.</div>
   </div>
 </section>
 
@@ -190,7 +190,7 @@
       <div class="step"><div class="num">1</div><div><h3>Declare the matrix</h3><p>Roles × tools × allow/deny, in TypeScript, next to your agent. Point it at your existing AI SDK tools.</p></div></div>
       <div class="step"><div class="num">2</div><div><h3>Probe, then converse</h3><p>Direct probes hit your real handlers with zero tokens. Scenarios run the agent; model calls are recorded once and replayed offline in CI.</p></div></div>
       <div class="step"><div class="num">3</div><div><h3>Gate the deploy</h3><p>The GitHub Action fails on violations and regressions, and uploads a hash-chained, optionally Ed25519-signed evidence bundle.</p></div></div>
-      <div class="step"><div class="num">4</div><div><h3>Show your reviewer</h3><p>Open the dashboard or export a self-contained HTML report. <code>rolecall verify</code> proves the bundle wasn't edited.</p></div></div>
+      <div class="step"><div class="num">4</div><div><h3>Show your reviewer</h3><p>Open the dashboard or export a self-contained HTML report. Sign runs with your key and <code>rolecall verify</code> shows they haven't been changed.</p></div></div>
     </div>
     <div class="panel">
       <div class="panel-head"><span>rolecall.suite.ts</span><span>TypeScript</span></div>
@@ -220,8 +220,8 @@
 
 <section id="pricing">
   <div class="wrap">
-    <h2>Free to test. Pay to keep the evidence.</h2>
-    <p class="sub">Everything is open source under Apache-2.0, including Rolecall Cloud: run history, per-branch regressions, server-side re-verification and long-term evidence. Self-host it for free, or let us run it for you.</p>
+    <h2>Pricing</h2>
+    <p class="sub">Everything is open source under Apache-2.0, including Rolecall Cloud (run history, per-branch regressions, server-side checks and long-term evidence). Host it yourself for free, or let us run it for you.</p>
     <div class="pricing">
       <div class="plan"><h3>Open source</h3><div class="price">$0</div><div class="for">Everything you need to test locally and in CI.</div>
         <ul><li>Permission matrix &amp; scenarios</li><li>Record/replay, offline CI</li><li>Signed evidence bundles</li><li>Local dashboard &amp; HTML reports</li></ul>
@@ -246,7 +246,7 @@
     <details><summary>How is this different from red-teaming tools like Promptfoo?</summary><p>Red-teaming generates attacks to see whether a model can be talked into things. Rolecall checks a declared policy, deterministically: every role × tool cell is tested against your real handlers, and the result says which layer held. The two complement each other.</p></details>
     <details><summary>Does my data or my prompts leave my machine?</summary><p>No. The SDK and CLI run locally and in your CI, have no telemetry, and replay mode blocks the network. Secrets are redacted before anything is written. Uploading to Rolecall Cloud is opt-in (<code>--push</code>).</p></details>
     <details><summary>Will it run against production?</summary><p>No. Suites must declare a target. <code>memory</code> runs anywhere, <code>sandbox</code> and <code>staging</code> require an explicit <code>ROLECALL_ALLOW_LIVE=1</code>, and production-looking targets are refused.</p></details>
-    <details><summary>Which frameworks are supported?</summary><p>The Vercel AI SDK (v7) today, plus a small adapter interface for anything else. OpenAI Agents SDK and Mastra adapters are next.</p></details>
+    <details><summary>Which frameworks are supported?</summary><p>The Vercel AI SDK (v7) today, plus a small adapter interface you can implement for anything else.</p></details>
     <details><summary>Doesn't testing agents burn tokens?</summary><p>Direct probes use zero tokens. Scenarios record model responses once (<code>--mode record</code>) and replay them offline after that, so CI runs are free and deterministic.</p></details>
   </div>
 </section>

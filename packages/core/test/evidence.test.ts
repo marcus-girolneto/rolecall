@@ -88,6 +88,11 @@ describe('evidence bundle', () => {
     expect(all).toContain('[REDACTED]');
   });
 
+  it('does not treat words ending in "sk-" as secrets', () => {
+    const r = createRedactor({ env: {} });
+    expect(r.string('risk-assessment-tool-v2-production')).toBe('risk-assessment-tool-v2-production');
+  });
+
   it('redacts common token formats', () => {
     const r = createRedactor({ env: {} });
     expect(r.string('Authorization: Bearer abcdefghijklmnop.qrs')).toBe('Authorization: [REDACTED]');

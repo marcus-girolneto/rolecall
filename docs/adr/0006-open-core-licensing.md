@@ -1,4 +1,4 @@
-# ADR 0006 — Everything open source
+# ADR 0006: Everything open source
 
 - Status: accepted (2026-10-20), supersedes the earlier open-core decision
 

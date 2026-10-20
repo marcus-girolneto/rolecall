@@ -63,6 +63,16 @@ describe('rolecall CLI on the invoice demo', () => {
     const html = readFileSync(join(cwd, dir, 'report.html'), 'utf8');
     expect(html).toContain('window.__ROLECALL__={"mode":"static"');
     expect(html).not.toContain('<!--rolecall:bootstrap-->');
+    // Run data containing replacement patterns must not splice the template into the page.
+    const { renderDashboard } = await import('../../../packages/cli/src/server.js');
+    const page = renderDashboard({
+      mode: 'static',
+      runs: [],
+      details: {},
+      note: "price $' and $& and $$",
+    } as never);
+    expect(page).toContain("price $' and $& and $$");
+    expect(page.match(/<script>window\.__ROLECALL__=/g)).toHaveLength(1);
 
     const results = join(cwd, dir, 'results.json');
     writeFileSync(results, readFileSync(results, 'utf8').replace('"fail"', '"pass"'));

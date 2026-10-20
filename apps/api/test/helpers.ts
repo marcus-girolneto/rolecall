@@ -18,7 +18,7 @@ export interface TestContext {
 
 export async function createTestApp(
   overrides: Record<string, string> = {},
-  deps: Partial<Pick<AppDeps, 'dashboard'>> = {},
+  deps: Partial<Pick<AppDeps, 'dashboard' | 'clock'>> = {},
 ): Promise<TestContext> {
   const env = loadEnv({
     NODE_ENV: 'test',

@@ -1,4 +1,4 @@
-# ADR 0001 — Layered, modular architecture for the Cloud API
+# ADR 0001: Layered, modular architecture for the Cloud API
 
 - Status: accepted
 - Date: 2026-10-19

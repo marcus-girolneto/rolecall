@@ -21,7 +21,8 @@ export function renderDashboard(bootstrap: DashboardBootstrap): string {
     /[<\u2028\u2029]/g,
     (ch) => `\\u${ch.charCodeAt(0).toString(16).padStart(4, '0')}`,
   );
-  return html.replace('<!--rolecall:bootstrap-->', `<script>window.__ROLECALL__=${json}</script>`);
+  // A function replacement: run data may contain $&, $' or $` which a string replacement would expand.
+  return html.replace('<!--rolecall:bootstrap-->', () => `<script>window.__ROLECALL__=${json}</script>`);
 }
 
 /** Local dashboard over the runs directory. Binds to loopback only. */
@@ -38,6 +39,10 @@ export function startDashboard(runsDir: string, port: number): Promise<Server> {
     };
     const json = (status: number, body: unknown) => send(status, 'application/json', JSON.stringify(body));
     try {
+      // Only answer requests addressed to this machine, so a web page using DNS rebinding cannot read run data.
+      const host = (req.headers.host ?? '').toLowerCase();
+      if (host !== `127.0.0.1:${port}` && host !== `localhost:${port}`)
+        return json(421, { error: 'unexpected host' });
       if (req.method !== 'GET') return json(405, { error: 'method not allowed' });
       if (url.pathname === '/api/runs') return json(200, listRuns(runsDir));
       const match = url.pathname.match(/^\/api\/runs\/([\w-]+)$/);

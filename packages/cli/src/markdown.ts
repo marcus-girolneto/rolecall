@@ -73,7 +73,7 @@ export function toMarkdown(
   }
   lines.push(
     `<sub>${s.total} checks · ${s.pass} passed · ${s.fail} failed · ${s.warn} warnings · ${s.error} not checked` +
-      `${opts.bundleDir ? ` · full details in the \`rolecall-evidence\` artifact` : ''}</sub>`,
+      `${opts.bundleDir ? ` · full details in this run's \`rolecall-evidence-…\` artifact` : ''}</sub>`,
   );
   return `${lines.filter((l, i) => i > 0 || l).join('\n')}\n`;
 }

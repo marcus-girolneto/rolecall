@@ -16,11 +16,12 @@ export function IntegrityIcon({
     return (
       <ShieldX size={size} style={{ color: 'var(--fail)' }} aria-label="Integrity check failed" role="img" />
     );
+  // A signature checked against the key inside the bundle proves nothing about who signed it, so no green badge.
   if (run.signed)
     return (
-      <ShieldCheck size={size} style={{ color: 'var(--pass)' }} aria-label="Signed and verified" role="img" />
+      <ShieldCheck size={size} className="text-fg-3" aria-label="Hashes match, self-signed" role="img" />
     );
-  return <ShieldOff size={size} className="text-fg-3" aria-label="Hashes verified, unsigned" role="img" />;
+  return <ShieldOff size={size} className="text-fg-3" aria-label="Hashes match, unsigned" role="img" />;
 }
 
 export function Brand() {

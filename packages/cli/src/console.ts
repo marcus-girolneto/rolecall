@@ -103,7 +103,7 @@ export function printRun(result: RunResult, opts: { comparison?: RunComparison }
     for (const sc of conversations) {
       const phrases = sc.forbidden.map(forbidPhrase);
       out.push(
-        `  ${ICON[sc.status]} ${sc.name} ${c.dim(`(${sc.role})`)}${phrases.length ? ` ${c.dim('—')} ${phrases.join('; ')}` : ''}`,
+        `  ${ICON[sc.status]} ${sc.name} ${c.dim(`(${sc.role})`)}${phrases.length ? `${c.dim(':')} ${phrases.join('; ')}` : ''}`,
       );
     }
     out.push('');

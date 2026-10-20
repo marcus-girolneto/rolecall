@@ -11,6 +11,8 @@ export type BillingEvent =
       plan: string | null;
       customerId: string | null;
       subscriptionId: string | null;
+      /** Stripe's payment_status: 'paid', 'unpaid' or 'no_payment_required'. */
+      paymentStatus: string | null;
     }
   | {
       id: string;
@@ -104,6 +106,7 @@ export class StripeBillingGateway implements BillingGateway {
           plan: s.metadata?.plan ?? null,
           customerId: idOf(s.customer),
           subscriptionId: idOf(s.subscription),
+          paymentStatus: s.payment_status ?? null,
         };
       }
       case 'customer.subscription.updated':

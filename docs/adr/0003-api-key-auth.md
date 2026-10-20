@@ -1,4 +1,4 @@
-# ADR 0003 — API key authentication model
+# ADR 0003: API key authentication model
 
 - Status: accepted
 - Date: 2026-10-19

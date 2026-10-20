@@ -1,7 +1,7 @@
 import type { AuthContext } from '../../shared/auth.js';
 import type { Clock } from '../../shared/clock.js';
 import { generateApiKey, hashApiKey, looksLikeApiKey } from '../../shared/crypto.js';
-import { notFound } from '../../shared/errors.js';
+import { AppError, notFound } from '../../shared/errors.js';
 import { newId } from '../../shared/ids.js';
 import type { ProjectsRepository } from '../projects/repository.js';
 import type { ApiKey, ApiKeysRepository } from './repository.js';
@@ -35,7 +35,9 @@ export class ApiKeysService {
     const now = this.clock.now();
     if (!key.lastUsedAt || now.getTime() - key.lastUsedAt.getTime() > TOUCH_INTERVAL_MS)
       await this.keys.touch(key.id, now);
-    return { keyId: key.id, orgId: key.orgId, projectId: key.projectId, scopes: key.scopes };
+    // A key bound to one project never acts on the whole organisation, whatever scopes it was given.
+    const scopes = key.projectId ? key.scopes.filter((s) => s !== 'admin') : key.scopes;
+    return { keyId: key.id, orgId: key.orgId, projectId: key.projectId, scopes };
   }
 
   async list(auth: AuthContext): Promise<ApiKeyDto[]> {
@@ -43,6 +45,9 @@ export class ApiKeysService {
   }
 
   async create(auth: AuthContext, input: CreateApiKeyInput): Promise<ApiKeyCreatedDto> {
+    if (input.projectId && input.scopes.includes('admin')) {
+      throw new AppError('bad_request', 'A key bound to one project cannot have the admin scope.');
+    }
     if (input.projectId && !(await this.projects.findById(auth.orgId, input.projectId)))
       throw notFound('Project');
     const secret = generateApiKey();

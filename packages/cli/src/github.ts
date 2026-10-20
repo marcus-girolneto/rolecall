@@ -51,11 +51,20 @@ export async function upsertPrComment(opts: {
   };
 
   const { repo, number } = opts.pr;
-  const comments = (await call('GET', `/repos/${repo}/issues/${number}/comments?per_page=100`)) as Array<{
-    id: number;
-    body?: string;
-  }>;
-  const existing = comments.find((c) => c.body?.includes(COMMENT_MARKER));
+  // Look through every page, and only reuse a comment that starts with our marker (never a person's comment
+  // that happens to quote it).
+  let existing: { id: number } | undefined;
+  for (let page = 1; page <= 30 && !existing; page++) {
+    const comments = (await call(
+      'GET',
+      `/repos/${repo}/issues/${number}/comments?per_page=100&page=${page}`,
+    )) as Array<{
+      id: number;
+      body?: string;
+    }>;
+    existing = comments.find((c) => c.body?.trimStart().startsWith(COMMENT_MARKER));
+    if (comments.length < 100) break;
+  }
   const saved = (
     existing
       ? await call('PATCH', `/repos/${repo}/issues/comments/${existing.id}`, { body: opts.body })

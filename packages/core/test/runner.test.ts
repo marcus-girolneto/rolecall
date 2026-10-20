@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  blockNetwork,
   defineSuite,
   LiveTargetRefusedError,
   NetworkBlockedError,
@@ -190,6 +191,45 @@ describe('runSuite', () => {
     const cell = byId(result.policy, 'editor:remove');
     expect(cell.status).toBe('fail');
     expect(cell.findings[0]?.hint).toContain('roles.editor has { kind }');
+  });
+
+  it('blocks raw http and net connections in replay mode, honouring allowHosts', async () => {
+    const http = await import('node:http');
+    const net = await import('node:net');
+    const attempt = (fn: () => { on: (e: string, cb: (err: Error) => void) => unknown }) =>
+      new Promise<string>((resolve) => {
+        try {
+          const req = fn();
+          req.on('error', (err: Error) => resolve(err.name));
+          setTimeout(() => resolve('no error yet'), 200);
+        } catch (err) {
+          resolve((err as Error).name);
+        }
+      });
+    const restore = blockNetwork(['localhost']);
+    try {
+      expect(await attempt(() => http.get({ host: 'example.com', port: 80, path: '/' }))).toBe(
+        'NetworkBlockedError',
+      );
+      expect(await attempt(() => net.connect({ host: '1.1.1.1', port: 80 }))).toBe('NetworkBlockedError');
+      // allowed host: the guard lets it through (the connection itself may then fail with ECONNREFUSED)
+      expect(await attempt(() => net.connect({ host: 'localhost', port: 1 }))).not.toBe(
+        'NetworkBlockedError',
+      );
+    } finally {
+      restore();
+    }
+  });
+
+  it('rejects scenario names that would share an id', () => {
+    expect(() =>
+      suite({
+        scenarios: [
+          { name: 'Refund: order 1', role: 'reader', turns: ['a'] },
+          { name: 'refund order 1', role: 'reader', turns: ['b'] },
+        ],
+      }),
+    ).toThrow(/too similar/);
   });
 
   it('filters tests by id', async () => {

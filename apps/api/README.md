@@ -1,4 +1,4 @@
-# @rolecall/api — Rolecall Cloud API
+# Rolecall Cloud API (`@rolecall/api`)
 
 Multi-tenant backend for Rolecall Cloud. It stores evidence bundles uploaded by `rolecall push`, re-verifies every
 hash (and signature) server-side, serves run history and regressions to the dashboard, and enforces plan limits.
@@ -27,7 +27,7 @@ ROLECALL_API_URL=http://localhost:8787 ROLECALL_API_KEY=rc_live_… npx rolecall
 ```
 
 To keep data between restarts use `DATABASE_URL=pglite://./.data/pglite`. For a real Postgres 17:
-`docker compose up --build` from `apps/api/` (API on :8787, Postgres on :5432).
+`docker compose up --build` from `apps/api/` (API on 127.0.0.1:8787; Postgres stays on the compose network).
 
 ## Endpoints (prefix `/v1`)
 

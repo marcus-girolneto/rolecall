@@ -10,39 +10,38 @@ in CI, with evidence you can verify.
 <p align="center">
   <a href="https://marcus-girolneto.github.io/rolecall/"><b>Website</b></a> ·
   <a href="https://marcus-girolneto.github.io/rolecall/#video"><b>56-second demo video</b></a> ·
-  <a href="https://marcus-girolneto.github.io/rolecall/demo/"><b>Live example report</b></a> ·
-  <a href="https://marcus-girolneto.github.io/rolecall/como-funciona.html"><b>Como funciona (PT)</b></a>
+  <a href="https://marcus-girolneto.github.io/rolecall/demo/"><b>Live example report</b></a>
 </p>
 
 ![Rolecall dashboard: who can do what, with two permission problems](apps/ui/screenshots/overview-desktop.png)
 
 ---
 
-AI agents act on behalf of users. When a `support` user asks your agent to refund $450, or says *"ignore the rules
-and delete the customer"*, the question is not whether the model sounds polite. It is: **can that role cause that
-effect at all?** In most agents the only thing standing in the way is the prompt, and a prompt is not access control.
+AI agents act on behalf of users. If a `support` user asks your agent to refund $450, or tells it to *"ignore the
+rules and delete the customer"*, what matters is whether that role can make it happen at all. In most agents the
+prompt is the only thing in the way, and a prompt isn't access control.
 
-Rolecall answers that question before you deploy:
+Rolecall checks this before you deploy:
 
-| | Feature | What you get |
-|---|---|---|
-| 🧩 | **Permission table** | Declare `role → tool → allow / deny` next to your agent. `rolecall init` writes it for you. |
-| 🔍 | **Direct checks** | Calls your real tools as each role, with **no LLM and no tokens**, and compares your data before and after. |
-| 💬 | **Conversations** | Runs your real agent through scripted chats and intercepts every tool call. |
-| 🧱 | **Which layer stopped it** | Every blocked action is labelled: *blocked by your code*, *AI refused*, or *ran*. |
-| ⚠️ | **"Only the AI is protecting this"** | When the model refuses but your code would have allowed it, you get a warning. `--strict` fails the build. |
-| 🤖 | **AI-written attacks** | `rolecall attacks` asks any OpenRouter model to write realistic attacks for every forbidden action. |
-| 📼 | **Record & replay** | Model answers are recorded once and replayed offline. CI is free, fast and deterministic. |
-| 🧾 | **Evidence** | Every run writes a hash-chained bundle, optionally Ed25519-signed. `rolecall verify` proves it was not edited. |
-| 📊 | **Dashboard & reports** | `rolecall ui`, a self-contained HTML report, JUnit and JSON. |
-| ✅ | **GitHub Action** | Runs on every pull request, comments a plain-language report, fails on violations or regressions. |
-| ☁️ | **Rolecall Cloud** | Self-hostable API for team history, per-branch regressions, server-side re-verification and plan limits. |
+| Feature | What you get |
+|---|---|
+| **Permission table** | Declare `role → tool → allow / deny` next to your agent. `rolecall init` writes it for you. |
+| **Direct checks** | Calls your real tools as each role, with **no LLM and no tokens**, and compares your data before and after. |
+| **Conversations** | Runs your real agent through scripted chats and intercepts every tool call. |
+| **Which layer stopped it** | Every blocked action is labelled: *blocked by your code*, *AI refused*, or *ran*. |
+| **"Only the AI is protecting this"** | When the model refuses but your code would have allowed it, you get a warning. `--strict` fails the build. |
+| **AI-written attacks** | `rolecall attacks` asks any OpenRouter model to write realistic attacks for every forbidden action. |
+| **Record & replay** | Model answers are recorded once and replayed offline. CI is free, fast and deterministic. |
+| **Evidence** | Every run writes a hash-chained bundle. Sign it with your Ed25519 key and `rolecall verify --public-key` shows it hasn't been changed since. |
+| **Dashboard & reports** | `rolecall ui`, a self-contained HTML report, JUnit and JSON. |
+| **GitHub Action** | Runs on every pull request, comments a plain-language report, fails on violations or regressions. |
+| **Rolecall Cloud** | Self-hostable API for team history, per-branch regressions, server-side re-verification and plan limits. |
 
 Everything in this repository is open source under Apache-2.0.
 
 ## Contents
 
-0. **New here? Follow the [hands-on tutorial in Portuguese](examples/loja-agent/README.md)**: an online-store chatbot with a hidden bug, set up and tested step by step.
+0. **New here? Start with the [hands-on tutorial](examples/store-agent/README.md)**: an online-store chatbot with a hidden bug, set up and tested step by step.
 1. [Try the demo (2 minutes)](#1-try-the-demo-2-minutes)
 2. [Install it in your project](#2-install-it-in-your-project)
 3. [Write your first suite](#3-write-your-first-suite)
@@ -277,7 +276,7 @@ external API. If you change prompts, tools or settings, Rolecall says the record
 again. `--mode record-missing` records only conversations that have no recording yet, which is handy when the model
 provider rate-limits part of a run. `--mode live` calls the model every time and records nothing.
 
-API keys go in a `.env` file next to the suite. Rolecall loads it; never commit it. For OpenRouter models set
+API keys go in a `.env` file in the folder you run `rolecall` from. Rolecall loads it; never commit it. For OpenRouter models set
 `OPENROUTER_API_KEY` ([get a key](https://openrouter.ai/keys)). Replaying needs no key.
 
 ## 6. AI-written attacks
@@ -328,7 +327,8 @@ See the [live example report](https://marcus-girolneto.github.io/rolecall/demo/)
 Every `rolecall run` writes a bundle to `.rolecall/runs/<run-id>/`: `results.json`, `events.jsonl`, and a
 `manifest.json` holding the SHA-256 of every file, the git commit, the Node version, the model ids and the hashes of
 the recordings used, all chained into one root hash. Secrets are redacted before anything is written: values of env
-vars named like `*KEY*`, `*TOKEN*` or `*SECRET*`, and common token formats.
+vars named like `*KEY*`, `*TOKEN*`, `*SECRET*` or `*PASSWORD*` (8 characters or longer), common token formats, and
+anything you list in the suite's `redact` option.
 
 ```bash
 npx rolecall verify .rolecall/runs/<run-id>                  # recomputes every hash
@@ -336,6 +336,10 @@ npx rolecall keygen                                          # Ed25519 key pair 
 ROLECALL_SIGNING_KEY_FILE=.rolecall/keys/rolecall-signing.key npx rolecall run    # signed bundle
 npx rolecall verify .rolecall/runs/<run-id> --public-key .rolecall/keys/rolecall-signing.pub
 ```
+
+Without `--public-key`, `verify` checks the signature against the key stored in the bundle. That catches accidental
+changes, but someone who edits a bundle can re-sign it with a new key. Keep your public key somewhere you control and
+always pass it when the result matters.
 
 In CI, store the private key as a secret in `ROLECALL_SIGNING_KEY`. A bundle is evidence that these tests ran and
 what they found. It is not a compliance certificate.
@@ -375,7 +379,7 @@ On other CI systems, run `npx rolecall run --junit rolecall.xml` and publish the
 ## 10. Rolecall Cloud (self-hosted)
 
 The Cloud API (`apps/api`) keeps a team's run history: run list, per-branch regressions against the previous run,
-server-side re-verification of every uploaded bundle (tampered uploads are rejected), multiple projects, API keys with
+server-side re-checks of every uploaded bundle (uploads whose hashes don't match are rejected), multiple projects, API keys with
 scopes, plan limits and Stripe billing. It serves the same dashboard at `/app`.
 
 **Run it locally without installing a database** (PGlite, in memory):

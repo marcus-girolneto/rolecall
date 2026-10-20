@@ -1,4 +1,4 @@
-# ADR 0002 — PostgreSQL + Drizzle, with PGlite for development and tests
+# ADR 0002: PostgreSQL + Drizzle, with PGlite for development and tests
 
 - Status: accepted
 - Date: 2026-10-19

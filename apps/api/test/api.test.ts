@@ -381,6 +381,21 @@ describe('plan limits', () => {
   });
 });
 
+describe('api keys bound to a project', () => {
+  it('cannot be admin keys, and existing ones lose org-wide rights', async () => {
+    const org = await signup(t.app, 'Scoped');
+    const admin = bearer(org.apiKey.key);
+    const res = await t.app.inject({
+      method: 'POST',
+      url: '/v1/api-keys',
+      headers: admin,
+      payload: { name: 'ci', scopes: ['admin', 'runs:write'], projectId: org.project.id },
+    });
+    expect(res.statusCode).toBe(400);
+    expect(res.json().error.message).toContain('cannot have the admin scope');
+  });
+});
+
 describe('billing', () => {
   it('returns 501 billing_disabled for checkout when Stripe is not configured', async () => {
     const org = await signup(t.app, 'NoStripe');
@@ -418,6 +433,7 @@ describe('billing', () => {
           client_reference_id: org.organization.id,
           customer: 'cus_123',
           subscription: 'sub_123',
+          payment_status: 'paid',
           metadata: { orgId: org.organization.id, plan: 'team' },
         },
       },
@@ -432,12 +448,30 @@ describe('billing', () => {
       'free',
     );
 
+    // A checkout whose payment hasn't arrived yet (delayed payment methods) must not upgrade the plan.
+    const unpaid = completed
+      .replace('"evt_checkout_1"', '"evt_checkout_unpaid"')
+      .replace('"paid"', '"unpaid"');
+    expect((await send(unpaid, sign(unpaid))).statusCode).toBe(200);
+    expect((await t.app.inject({ method: 'GET', url: '/v1/billing', headers: admin })).json().plan.id).toBe(
+      'free',
+    );
+
     const ok = await send(completed, sign(completed));
     expect(ok.statusCode).toBe(200);
     expect(ok.json()).toEqual({ received: true });
     const afterCheckout = (await t.app.inject({ method: 'GET', url: '/v1/billing', headers: admin })).json();
     expect(afterCheckout.plan.id).toBe('team');
     expect(afterCheckout.limits.runsPerMonth).toBe(5000);
+
+    // With a subscription in place, a second checkout is refused instead of starting a second subscription.
+    const again = await t.app.inject({
+      method: 'POST',
+      url: '/v1/billing/checkout',
+      headers: admin,
+      payload: { plan: 'assurance' },
+    });
+    expect(again.statusCode).toBe(409);
 
     // Downgrade arrives, then the original checkout event is replayed: the replay must not re-apply "team".
     const deleted = JSON.stringify({
