@@ -12,7 +12,7 @@
     "test": "vitest run",
     "lint": "biome check .",
     "format": "biome format --write .",
-    "demo": "pnpm --filter invoice-agent-example rolecall"
+    "demo": "node scripts/demo.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",

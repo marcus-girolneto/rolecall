@@ -58,11 +58,21 @@ Everything in this repository is open source under Apache-2.0.
 
 ## 1. Try the demo (2 minutes)
 
-You need Node 22 or newer and pnpm (`npm i -g pnpm`).
+You need Node 22 or newer and pnpm (`npm i -g pnpm`). One command does everything:
 
 ```bash
 git clone https://github.com/marcus-girolneto/rolecall && cd rolecall
-pnpm install && pnpm build
+pnpm install
+pnpm demo
+```
+
+`pnpm demo` builds Rolecall, tests the example agent with its planted bug (2 problems found), tests it again with the
+bug fixed (everything passes), then opens the dashboard in your browser with both runs. Press Ctrl+C to stop.
+
+### The same thing, step by step
+
+```bash
+pnpm build
 cd examples/invoice-agent
 ```
 
