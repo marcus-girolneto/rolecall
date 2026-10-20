@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs';
+import { existsSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { attackScenarios, attacksPath, readAttacks } from './attacks.js';
 import { Cassette, CassetteMissError } from './cassette.js';
@@ -11,6 +11,7 @@ import { createRedactor } from './redact.js';
 import type {
   DenialCheckInput,
   Finding,
+  ForbidExpectation,
   ForbidResult,
   Layer,
   PolicyResult,
@@ -63,6 +64,8 @@ const FAILING: ReadonlySet<Finding['code']> = new Set([
 /** Errors that mean the tool ran against empty or missing test data rather than a real decision. */
 const MISSING_DATA =
   /Cannot read properties of (undefined|null)|is not a function|is not iterable|undefined is not an object/;
+/** Provider throttling, as reported by the AI SDK and common gateways. */
+const RATE_LIMITED = /rate.?limit|too many requests|\b429\b|quota exceeded/i;
 const ERRORING: ReadonlySet<Finding['code']> = new Set(['unexpected_error', 'agent_error']);
 
 export async function runSuite<Ctx, Id>(suite: SuiteDef<Ctx, Id>, opts: RunOptions = {}): Promise<RunOutput> {
@@ -170,8 +173,10 @@ export async function runSuite<Ctx, Id>(suite: SuiteDef<Ctx, Id>, opts: RunOptio
     for (const scenario of scenarioDefs) {
       const id = `scenario:${slug(scenario.name)}`;
       if (!selected(id, scenario)) continue;
-      const cassette = new Cassette(join(cassetteDir, `${slug(scenario.name)}.json`), mode);
-      if (mode === 'replay' && existsSync(cassette.file)) cassettes.add(cassette.file);
+      const file = join(cassetteDir, `${slug(scenario.name)}.json`);
+      const scenarioMode = mode === 'record-missing' ? (existsSync(file) ? 'replay' : 'record') : mode;
+      const cassette = new Cassette(file, scenarioMode);
+      if (scenarioMode === 'replay' && existsSync(cassette.file)) cassettes.add(cassette.file);
 
       const result = await timed(id, () =>
         withCtx(async (ctx) => {
@@ -221,15 +226,17 @@ export async function runSuite<Ctx, Id>(suite: SuiteDef<Ctx, Id>, opts: RunOptio
               message: `The agent crashed during the conversation: ${errorMessage(error)}`,
               hint:
                 error instanceof CassetteMissError
-                  ? 'The prompt, tools or model settings changed since the last recording. Re-record with `rolecall run --mode record`.'
-                  : 'Run the agent outside Rolecall with the same input to reproduce it.',
+                  ? 'Record the missing model answers with `rolecall run --mode record-missing` (or `--mode record` to redo all of them).'
+                  : RATE_LIMITED.test(errorMessage(error))
+                    ? 'The model provider is rate-limiting requests. Wait a minute, then run `rolecall run --mode record-missing` to record only the conversations still missing.'
+                    : 'Run the agent outside Rolecall with the same input to reproduce it.',
             });
           }
           const stateDiff = diffState(before, await snapshot(ctx), suite.ignoreStatePaths);
 
           const forbidden: ForbidResult[] = [];
           for (const f of scenario.forbid ?? []) {
-            let spec: { tool: string; args?: unknown } = typeof f === 'string' ? { tool: f } : f;
+            let spec: ForbidExpectation = typeof f === 'string' ? { tool: f } : f;
             // Without explicit args, probe with the tool's example so model-only defenses are still caught.
             if (spec.args === undefined && suite.examples?.[spec.tool] !== undefined) {
               spec = { ...spec, args: suite.examples[spec.tool] };
@@ -274,8 +281,13 @@ export async function runSuite<Ctx, Id>(suite: SuiteDef<Ctx, Id>, opts: RunOptio
           } satisfies ScenarioResult;
         }),
       );
-      cassette.save();
-      if (mode === 'record') cassettes.add(cassette.file);
+      // A conversation that crashed (e.g. the provider rate-limited it halfway) is not saved, so a partial recording
+      // never masquerades as a stale one and `--mode record-missing` retries it next time.
+      const crashed = result.findings.some((f) => f.code === 'agent_error');
+      if (!crashed) cassette.save();
+      // Re-recording everything and this one failed: its old recording is stale, so drop it for record-missing.
+      else if (scenarioMode === 'record' && existsSync(cassette.file)) rmSync(cassette.file);
+      if (scenarioMode === 'record' && existsSync(cassette.file)) cassettes.add(cassette.file);
       scenarios.push(result);
     }
   } finally {
@@ -377,13 +389,13 @@ function evaluatePolicy(
 }
 
 async function evaluateForbid(
-  spec: { tool: string; args?: unknown },
+  spec: ForbidExpectation,
   scenario: ScenarioDef,
   calls: ToolCallRecord[],
   findings: Finding[],
   probe: (args: unknown) => Promise<ProbeOutcome>,
 ): Promise<ForbidResult> {
-  const attempts = calls.filter((c) => c.tool === spec.tool);
+  const attempts = calls.filter((c) => c.tool === spec.tool && matches(c.args, spec.match));
   if (attempts.some((c) => c.layer === 'executed')) {
     findings.push({
       code: 'unexpected_execution',
@@ -420,6 +432,14 @@ async function evaluateForbid(
       ...(outcome.error ? { error: outcome.error } : {}),
     },
   };
+}
+
+/** True when every field in `match` is present in `args` with an equal value. */
+function matches(args: unknown, match: Record<string, unknown> | undefined): boolean {
+  if (!match) return true;
+  if (typeof args !== 'object' || args === null) return false;
+  const a = args as Record<string, unknown>;
+  return Object.entries(match).every(([k, v]) => stableStringify(a[k]) === stableStringify(v));
 }
 
 function checkState(expected: 'unchanged' | 'changed' | undefined, diff: unknown[], findings: Finding[]) {

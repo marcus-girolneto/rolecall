@@ -1,5 +1,5 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname } from 'node:path';
+import { basename, dirname } from 'node:path';
 import { sha256, stableStringify } from './hash.js';
 import type { CassetteHandle, RunMode } from './types.js';
 
@@ -36,8 +36,11 @@ export class Cassette implements CassetteHandle {
     const key = Cassette.key(request);
     if (!(key in this.entries)) {
       throw new CassetteMissError(
-        `No recorded model response in ${this.file} for request ${key.slice(0, 12)}. ` +
-          'The prompt, tools or settings changed since recording. Re-record with `rolecall run --mode record`.',
+        existsSync(this.file)
+          ? `No recorded model response in ${basename(this.file)} for request ${key.slice(0, 12)}: the prompt, tools, ` +
+              'code or settings changed since it was recorded. Record again with `rolecall run --mode record`.'
+          : `This conversation has not been recorded yet (${basename(this.file)}). ` +
+              'Record it with `rolecall run --mode record-missing`.',
       );
     }
     return this.entries[key];

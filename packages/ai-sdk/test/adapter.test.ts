@@ -1,4 +1,4 @@
-import { mkdtempSync, readdirSync } from 'node:fs';
+import { mkdtempSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { defineSuite, runSuite } from '@rolecall/core';
@@ -106,12 +106,46 @@ describe('aiSdkAgent', () => {
     expect(replay.cassettes).toHaveLength(2);
   });
 
+  it('record-missing records only conversations without a recording', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'rolecall-missing-'));
+    const first = countingModel();
+    await runSuite(makeSuite(first), { mode: 'record-missing', cassetteDir: dir });
+    expect(first.doGenerateCalls.length).toBe(4);
+    rmSync(join(dir, 'owner-writes.json'));
+    const second = countingModel();
+    const again = await runSuite(makeSuite(second), { mode: 'record-missing', cassetteDir: dir });
+    expect(second.doGenerateCalls.length).toBe(2); // only the deleted conversation
+    expect(again.result.summary.pass).toBe(4);
+  });
+
+  it('does not save a conversation that crashed while recording', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'rolecall-crash-'));
+    let n = 0;
+    const flaky = new MockLanguageModelV4({
+      doGenerate: async () => {
+        n++;
+        if (n % 2 === 0) throw new Error('429 Too Many Requests: rate limit');
+        return {
+          content: [{ type: 'tool-call', toolCallId: `c${n}`, toolName: 'addNote', input: '{"text":"hi"}' }],
+          finishReason: { unified: 'tool-calls', raw: undefined },
+          usage,
+          warnings: [],
+        };
+      },
+    });
+    const { result } = await runSuite(makeSuite(flaky), { mode: 'record', cassetteDir: dir });
+    expect(readdirSync(dir)).toEqual([]);
+    const hint = result.scenarios[0]?.findings.find((f) => f.code === 'agent_error')?.hint ?? '';
+    expect(hint).toContain('rate-limiting');
+    expect(hint).toContain('--mode record-missing');
+  });
+
   it('reports a replay miss as an agent error with a re-record hint', async () => {
     const dir = mkdtempSync(join(tmpdir(), 'rolecall-empty-'));
     const { result } = await runSuite(makeSuite(countingModel()), { mode: 'replay', cassetteDir: dir });
     const s = result.scenarios[0];
     expect(s?.status).toBe('error');
-    expect(s?.findings[0]?.message).toMatch(/--mode record/);
+    expect(s?.findings[0]?.message).toMatch(/--mode record-missing/);
   });
 
   it('scriptedModel runs without cassettes and sees tool errors', async () => {

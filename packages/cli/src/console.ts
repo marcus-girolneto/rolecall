@@ -67,7 +67,7 @@ export function printRun(result: RunResult, opts: { comparison?: RunComparison }
     );
   } else if (s.error) {
     out.push(
-      `  ${c.magenta(c.bold(`◆ ${s.error} of ${s.total} checks could not run`))}  ${c.dim('fix the test setup below first')}`,
+      `  ${c.magenta(c.bold(`◆ ${s.error} of ${s.total} checks could not run`))}  ${c.dim('see why below')}`,
     );
   } else if (s.warn) {
     out.push(

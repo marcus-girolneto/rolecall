@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const MAX_BUNDLE_BYTES = 5 * 1024 * 1024;
 
 const STATUS = ['pass', 'fail', 'warn', 'error'] as const;
-const MODE = ['replay', 'record', 'live'] as const;
+const MODE = ['replay', 'record', 'record-missing', 'live'] as const;
 
 const summarySchema = z.object({
   total: z.number().int().nonnegative(),

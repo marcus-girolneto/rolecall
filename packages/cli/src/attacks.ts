@@ -3,8 +3,9 @@ import { dirname, join, resolve } from 'node:path';
 import {
   type Attack,
   type AttackFile,
+  type AttackTarget,
+  attackTargets,
   DEFAULT_ATTACKS_FILE,
-  deniedCells,
   type SuiteDef,
   type ToolInfo,
 } from '@rolecall/core';
@@ -14,13 +15,13 @@ import { createJiti } from 'jiti';
 export interface AttackGenerator {
   generateAttacks(opts: {
     model: unknown;
-    cells: Array<{ role: string; tool: string }>;
+    cells: AttackTarget[];
     tools: ToolInfo[];
     examples?: Record<string, unknown>;
     perCell?: number;
     appContext?: string;
-    onProgress?: (done: number, total: number, cell: { role: string; tool: string }) => void;
-  }): Promise<{ attacks: Attack[]; failures: Array<{ role: string; tool: string; error: string }> }>;
+    onProgress?: (done: number, total: number, cell: AttackTarget) => void;
+  }): Promise<{ attacks: Attack[]; failures: Array<AttackTarget & { error: string }> }>;
   openRouterModel(modelId: string): unknown;
 }
 
@@ -50,7 +51,7 @@ export async function generateAttackFile(
   opts: AttackRunOptions,
 ): Promise<{ file: string; count: number; failed: number }> {
   const { suite } = opts;
-  const cells = deniedCells(suite);
+  const cells = attackTargets(suite);
   if (!cells.length)
     throw new Error('Nothing to attack: the suite has no "deny" cells in `permissions` or `policy`.');
 
@@ -77,7 +78,10 @@ export async function generateAttackFile(
     perCell: opts.perCell,
     ...(opts.appContext ? { appContext: opts.appContext } : {}),
     onProgress: (done, total, cell) => {
-      if (done < total) opts.log(`  [${done + 1}/${total}] ${cell.role} → ${cell.tool}`);
+      if (done < total)
+        opts.log(
+          `  [${done + 1}/${total}] ${cell.role} → ${cell.tool}${cell.label ? ` (${cell.label})` : ''}`,
+        );
     },
   });
   for (const f of result.failures) opts.log(`  ✖ ${f.role} → ${f.tool}: ${f.error}`);

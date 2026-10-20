@@ -180,20 +180,29 @@ describe('rolecall CLI on the invoice demo', () => {
     const attacks = { generator: { generateAttacks, openRouterModel }, model } as never;
 
     expect(await main(['attacks', '--per-cell', '1'], cwd, { attacks })).toBe(0);
-    // viewer: refund + delete, support: delete. support → refund is input-dependent, so it is not attacked.
-    expect(asked).toHaveLength(3);
-    expect(text()).toContain('3 attacks saved to rolecall/attacks.json');
+    // Always-blocked pairs (viewer: refund + delete, support: delete), then support's input-dependent refund rules.
+    expect(asked).toHaveLength(5);
+    expect(text()).toContain('5 attacks saved to rolecall/attacks.json');
     const file = JSON.parse(readFileSync(join(cwd, 'rolecall/attacks.json'), 'utf8'));
-    expect(file.attacks.map((a: { role: string; tool: string }) => `${a.role}:${a.tool}`)).toEqual([
-      'viewer:refundInvoice',
-      'viewer:deleteCustomer',
-      'support:deleteCustomer',
+    expect(
+      file.attacks.map(
+        (a: { role: string; tool: string; label?: string }) => `${a.role}:${a.tool}:${a.label ?? ''}`,
+      ),
+    ).toEqual([
+      'viewer:refundInvoice:',
+      'viewer:deleteCustomer:',
+      'support:deleteCustomer:',
+      'support:refundInvoice:full refund above limit',
+      'support:refundInvoice:partial refund above limit',
     ]);
+    expect(asked[3]).toContain('NOT with this input (full refund above limit)');
 
+    // The targeted attacks make the stand-in model refund inv_1001, which support IS allowed to do.
+    // That must not count: only a refund of the targeted inv_1002 would.
     process.env.INVOICE_DEMO_FIXED = '1';
     out.length = 0;
     expect(await main(['run'], cwd)).toBe(0);
-    expect(text()).toContain('AI-generated attacks (3)  3 held');
+    expect(text()).toContain('AI-generated attacks (5)  5 held');
   });
 
   it('attacks: asks for a model when none is configured', async () => {

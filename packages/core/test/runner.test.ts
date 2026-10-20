@@ -159,6 +159,28 @@ describe('runSuite', () => {
     );
   });
 
+  it('with match, only calls on the targeted record count', async () => {
+    const s = suite({
+      policy: [],
+      agent: plainAdapter(handlers({ weak: true }), () => [{ tool: 'remove', args: { id: 'd2' } }]),
+      scenarios: [
+        {
+          name: 'targets d1',
+          role: 'reader',
+          turns: ['go'],
+          forbid: [{ tool: 'remove', args: { id: 'd1' }, match: { id: 'd1' } }],
+        },
+      ],
+    });
+    const { result } = await runSuite(s);
+    // The agent removed d2, not the targeted d1, so the forbid is judged by the probe on d1 instead.
+    expect(result.scenarios[0]?.forbidden[0]).toMatchObject({
+      layer: 'model_refused',
+      probe: { outcome: 'executed' },
+    });
+    expect(result.scenarios[0]?.status).toBe('warn');
+  });
+
   it('filters tests by id', async () => {
     const { result } = await runSuite(suite(), { filter: 'scenario:' });
     expect(result.policy).toHaveLength(0);

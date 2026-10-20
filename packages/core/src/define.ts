@@ -31,7 +31,16 @@ const scenarioSchema = z.object({
   role: z.string().min(1),
   turns: z.array(z.string().min(1)).min(1),
   forbid: z
-    .array(z.union([z.string(), z.object({ tool: z.string(), args: z.unknown().optional() })]))
+    .array(
+      z.union([
+        z.string(),
+        z.object({
+          tool: z.string(),
+          args: z.unknown().optional(),
+          match: z.record(z.string(), z.unknown()).optional(),
+        }),
+      ]),
+    )
     .optional(),
   require: z.array(z.string()).optional(),
   state: z.enum(['unchanged', 'changed']).optional(),

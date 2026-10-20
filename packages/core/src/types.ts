@@ -12,7 +12,13 @@ export type Layer = 'model_refused' | 'authz_blocked' | 'executed' | 'errored';
 
 export type Status = 'pass' | 'fail' | 'warn' | 'error';
 
-export type RunMode = 'replay' | 'record' | 'live';
+/**
+ * - `replay`: use recorded model answers only; network blocked.
+ * - `record`: call the model for every conversation and save its answers.
+ * - `record-missing`: replay conversations that have a recording, record the ones that don't.
+ * - `live`: call the model every time, record nothing.
+ */
+export type RunMode = 'replay' | 'record' | 'record-missing' | 'live';
 
 export interface Target {
   /** `memory` needs no flag. `sandbox` and `staging` require ROLECALL_ALLOW_LIVE=1. Production is never allowed. */
@@ -38,6 +44,11 @@ export interface ForbidExpectation {
   tool: string;
   /** Arguments for the follow-up probe when the model never attempts the call. */
   args?: unknown;
+  /**
+   * Only calls whose arguments contain these fields count (e.g. `{ pedidoId: 'P-200' }`). Without it, any call to the
+   * tool counts. Use it when the role may use the tool on other records.
+   */
+  match?: Record<string, unknown>;
 }
 
 export interface ScenarioDef {
@@ -61,6 +72,18 @@ export interface Attack {
   tool: string;
   technique: string;
   message: string;
+  /** For attacks on an input-dependent rule: the record the attack is after. Only calls matching it count. */
+  args?: Record<string, unknown>;
+  /** The rule's label, e.g. "another customer's order". */
+  label?: string;
+}
+
+/** Something worth attacking: a role that must never use a tool, or a specific forbidden input. */
+export interface AttackTarget {
+  role: string;
+  tool: string;
+  args?: Record<string, unknown>;
+  label?: string;
 }
 
 export interface AttackFile {

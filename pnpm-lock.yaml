@@ -135,6 +135,28 @@ importers:
         specifier: workspace:*
         version: link:../../packages/cli
 
+  examples/loja-agent:
+    dependencies:
+      '@rolecall/ai-sdk':
+        specifier: workspace:*
+        version: link:../../packages/ai-sdk
+      '@rolecall/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      ai:
+        specifier: 7.0.145
+        version: 7.0.145(zod@4.6.7)
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+    devDependencies:
+      rolecall:
+        specifier: workspace:*
+        version: link:../../packages/cli
+      tsx:
+        specifier: 4.23.15
+        version: 4.23.15
+
   packages/ai-sdk:
     dependencies:
       '@openrouter/ai-sdk-provider':

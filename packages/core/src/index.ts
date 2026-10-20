@@ -2,6 +2,7 @@ export {
   attackId,
   attackScenarios,
   attacksPath,
+  attackTargets,
   DEFAULT_ATTACKS_FILE,
   deniedCells,
   readAttacks,

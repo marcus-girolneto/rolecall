@@ -50,7 +50,7 @@ export async function main(argv: string[], cwd = process.cwd(), io: CliIO = {}):
 
   cli
     .command('run [suite]', 'Run a suite and write an evidence bundle')
-    .option('--mode <mode>', 'replay | record | live', { default: 'replay' })
+    .option('--mode <mode>', 'replay | record | record-missing | live', { default: 'replay' })
     .option('--out <dir>', 'Where evidence bundles are written', { default: DEFAULT_RUNS })
     .option('--cassettes <dir>', 'Where model recordings live', { default: 'rolecall/cassettes' })
     .option('--baseline <ref>', 'Bundle directory to compare against, or "latest"')
@@ -65,8 +65,8 @@ export async function main(argv: string[], cwd = process.cwd(), io: CliIO = {}):
     .action(
       action(async (suiteArg: string | undefined, o: Record<string, unknown>) => {
         const mode = String(o.mode) as RunMode;
-        if (!['replay', 'record', 'live'].includes(mode))
-          throw new Error(`--mode must be replay, record or live (got "${mode}")`);
+        if (!['replay', 'record', 'record-missing', 'live'].includes(mode))
+          throw new Error(`--mode must be replay, record, record-missing or live (got "${mode}")`);
         const suiteFile = resolve(cwd, suiteArg ?? DEFAULT_SUITE);
         if (!existsSync(suiteFile))
           throw new Error(`Suite not found: ${suiteFile}. Create one with \`rolecall init\`.`);
