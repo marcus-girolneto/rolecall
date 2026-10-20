@@ -1,4 +1,4 @@
 .env
-.rolecall/
-rolecall.suite.ts
-rolecall/
+/.rolecall/
+/rolecall.suite.ts
+/rolecall/
