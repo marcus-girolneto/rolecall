@@ -9,3 +9,6 @@ coverage/
 .env.*
 !.env.example
 .data/
+docs/benchmark/triage/
+.data/
+docs/launch/build/*.wav

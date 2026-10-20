@@ -22,6 +22,15 @@
       "outputs": [
         "dist/**"
       ]
+    },
+    "@rolecall/api#build": {
+      "dependsOn": [
+        "^build",
+        "@rolecall/ui#build"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
     }
   }
 }

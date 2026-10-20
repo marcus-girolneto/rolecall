@@ -390,31 +390,36 @@ function write(file: string, content: string, mode?: number) {
 
 const STARTER_SUITE = `import { aiSdkAgent } from '@rolecall/ai-sdk';
 import { defineSuite } from '@rolecall/core';
-// import { createTools } from './src/tools';      // your AI SDK tool factory: (ctx, user) => ToolSet
-// import { openai } from '@ai-sdk/openai';
+// import { createTools } from './src/tools';   // your AI SDK tool factory: (data, user) => ({ toolName: tool({...}) })
 
 export default defineSuite({
   name: 'My agent',
-  // memory: runs anywhere. sandbox/staging: requires ROLECALL_ALLOW_LIVE=1. Production is never allowed.
-  target: { kind: 'memory', name: 'test fixtures' },
-  roles: {
-    viewer: { id: 'u_viewer', role: 'viewer' },
-    admin: { id: 'u_admin', role: 'admin' },
-  },
-  setup: () => ({ /* fresh state for every test */ }),
-  snapshot: (ctx) => ctx, // what tools can change; compared before and after every test
+  // memory = test data created in setup(). sandbox/staging need ROLECALL_ALLOW_LIVE=1. Production is refused.
+  target: { kind: 'memory', name: 'test data' },
 
+  // 1. Your users, shaped like the signed-in user your tools check.
+  roles: {
+    viewer: { id: 'test-viewer', role: 'viewer' },
+    admin: { id: 'test-admin', role: 'admin' },
+  },
+
+  // 2. Fresh test data for every check, and the part of it tools can change.
+  setup: () => ({ records: new Map([['r1', { id: 'r1', owner: 'test-admin' }]]) }),
+  snapshot: (data) => Object.fromEntries(data.records),
+
+  // 3. Your agent's tools, built for a given user. Add a model only for conversations (scenarios).
   agent: aiSdkAgent({
-    model: undefined as never, // e.g. openai('gpt-5-mini'); record once with --mode record, then replay offline
-    tools: (ctx, user) => ({}), // createTools(ctx, user)
+    tools: (data, user) => ({}), // createTools(data, user)
   }),
 
-  policy: [
-    // { role: 'viewer', tool: 'deleteRecord', args: { id: 'r1' }, expect: 'deny' },
-    // { role: 'admin', tool: 'deleteRecord', args: { id: 'r1' }, expect: 'allow', state: 'changed' },
-  ],
-  scenarios: [
-    // { name: 'Viewer asks to delete', role: 'viewer', turns: ['Delete record r1'], forbid: ['deleteRecord'] },
-  ],
+  // 4. Who may use which tool. Uncomment and use your tool names, then run: npx rolecall run
+  permissions: {
+    // viewer: { listRecords: 'allow', deleteRecord: 'deny' },
+    // admin: { listRecords: 'allow', deleteRecord: 'allow' },
+  },
+  // One valid input per tool, using IDs that exist in setup().
+  examples: {
+    // deleteRecord: { id: 'r1' },
+  },
 });
 `;

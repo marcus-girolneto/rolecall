@@ -1,0 +1,38 @@
+# Local stack: API + Postgres 17.  Run from apps/api:  docker compose up --build
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: rolecall
+      POSTGRES_PASSWORD: rolecall
+      POSTGRES_DB: rolecall
+    # Not published: the API reaches Postgres on the compose network. Publish 127.0.0.1:5432 only if you need psql.
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rolecall -d rolecall"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build:
+      context: ../..
+      dockerfile: apps/api/Dockerfile
+    environment:
+      DATABASE_URL: postgres://rolecall:rolecall@postgres:5432/rolecall
+      PUBLIC_URL: http://localhost:${API_PORT:-8787}
+      LOG_LEVEL: info
+      CORS_ORIGINS: http://localhost:5173
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      STRIPE_PRICE_TEAM: ${STRIPE_PRICE_TEAM:-}
+      STRIPE_PRICE_ASSURANCE: ${STRIPE_PRICE_ASSURANCE:-}
+    ports:
+      - "127.0.0.1:${API_PORT:-8787}:8787"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:
