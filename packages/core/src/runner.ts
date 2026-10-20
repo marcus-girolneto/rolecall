@@ -170,6 +170,8 @@ export async function runSuite<Ctx, Id>(suite: SuiteDef<Ctx, Id>, opts: RunOptio
       );
     }
 
+    explainRejectedRoles(policy, suite.roles);
+
     for (const scenario of scenarioDefs) {
       const id = `scenario:${slug(scenario.name)}`;
       if (!selected(id, scenario)) continue;
@@ -432,6 +434,29 @@ async function evaluateForbid(
       ...(outcome.error ? { error: outcome.error } : {}),
     },
   };
+}
+
+/**
+ * A refused "allow" rule is often a test user that doesn't look like a real one (e.g. `{ role: 'admin' }` where the
+ * app reads `user.papel`). Two signals: the refusal mentions `undefined`/`null` (the code read a missing field), or
+ * every allowed action of that role was refused. Then say so instead of blaming the tool.
+ */
+function explainRejectedRoles(results: PolicyResult[], roles: Record<string, unknown>): void {
+  for (const role of Object.keys(roles)) {
+    const allows = results.filter((r) => r.role === role && r.expect === 'allow');
+    const allRefused = allows.length > 0 && allows.every((r) => r.outcome === 'authz_blocked');
+    const identity = roles[role];
+    const fields =
+      typeof identity === 'object' && identity !== null ? Object.keys(identity).join(', ') : typeof identity;
+    for (const r of allows) {
+      const finding = r.findings.find((f) => f.code === 'unexpected_denial');
+      if (!finding || !(allRefused || /\b(undefined|null)\b/.test(r.error ?? ''))) continue;
+      finding.hint =
+        `The test user for "${role}" probably doesn't look like a real one${r.error ? ` (refusal: "${r.error}")` : ''}. ` +
+        `roles.${role} has { ${fields} }: check it has the fields your tools read, for example \`papel\` instead of ` +
+        '`role`, or a tenant id.';
+    }
+  }
 }
 
 /** True when every field in `match` is present in `args` with an equal value. */

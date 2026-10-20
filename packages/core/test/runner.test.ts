@@ -181,6 +181,17 @@ describe('runSuite', () => {
     expect(result.scenarios[0]?.status).toBe('warn');
   });
 
+  it('blames the identity shape when every allowed action of a role is refused', async () => {
+    const s = suite({
+      roles: { reader: { role: 'reader' }, editor: { kind: 'editor' } },
+      scenarios: [],
+    });
+    const { result } = await runSuite(s);
+    const cell = byId(result.policy, 'editor:remove');
+    expect(cell.status).toBe('fail');
+    expect(cell.findings[0]?.hint).toContain('roles.editor has { kind }');
+  });
+
   it('filters tests by id', async () => {
     const { result } = await runSuite(suite(), { filter: 'scenario:' });
     expect(result.policy).toHaveLength(0);

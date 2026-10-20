@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('..', import.meta.url));
 const example = fileURLToPath(new URL('../examples/invoice-agent/', import.meta.url));
 const cli = fileURLToPath(new URL('../packages/cli/bin/rolecall.js', import.meta.url));
+// biome-ignore lint/suspicious/noUndeclaredEnvVars: optional override for the dashboard port
 const PORT = process.env.PORT ?? '4300';
 
 const step = (n, text) => console.log(`\n\x1b[1m\x1b[36m[${n}/4]\x1b[0m \x1b[1m${text}\x1b[0m\n`);
