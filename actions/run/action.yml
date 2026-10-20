@@ -1,0 +1,73 @@
+name: Rolecall
+description: Run Rolecall permission tests for your AI agent, upload the evidence bundle and fail on violations.
+author: Rolecall
+branding:
+  icon: grid
+  color: green
+
+inputs:
+  suite:
+    description: Path to the suite file, relative to working-directory.
+    default: rolecall.suite.ts
+  working-directory:
+    description: Directory containing the suite and node_modules (rolecall must be a devDependency).
+    default: .
+  mode:
+    description: replay (default, offline) | record | live
+    default: replay
+  strict:
+    description: Treat model-only-defense warnings as failures.
+    default: 'false'
+  baseline:
+    description: Optional bundle directory to compare against.
+    default: ''
+  push:
+    description: Upload the bundle to Rolecall Cloud (requires ROLECALL_API_KEY in env).
+    default: 'false'
+  comment:
+    description: 'On pull requests, post (and keep updated) a plain-language report as a PR comment. Needs the pull-requests: write permission.'
+    default: 'true'
+
+outputs:
+  bundle:
+    description: Path of the evidence bundle written by this run.
+    value: ${{ steps.run.outputs.bundle }}
+
+runs:
+  using: composite
+  steps:
+    - id: run
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        INPUT_SUITE: ${{ inputs.suite }}
+        INPUT_MODE: ${{ inputs.mode }}
+        INPUT_STRICT: ${{ inputs.strict }}
+        INPUT_BASELINE: ${{ inputs.baseline }}
+        INPUT_PUSH: ${{ inputs.push }}
+        INPUT_COMMENT: ${{ inputs.comment }}
+        EVENT_NAME: ${{ github.event_name }}
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
+        args=(run "$INPUT_SUITE" --mode "$INPUT_MODE" --junit .rolecall/junit.xml)
+        [ "$INPUT_STRICT" = "true" ] && args+=(--strict)
+        [ -n "$INPUT_BASELINE" ] && args+=(--baseline "$INPUT_BASELINE")
+        [ "$INPUT_PUSH" = "true" ] && args+=(--push)
+        [ "$INPUT_COMMENT" = "true" ] && [ "$EVENT_NAME" = "pull_request" ] && args+=(--comment)
+        set +e
+        npx --no-install rolecall "${args[@]}"
+        code=$?
+        set -e
+        latest=$(ls -1d .rolecall/runs/*/ 2>/dev/null | sort | tail -n 1)
+        echo "bundle=${latest%/}" >> "$GITHUB_OUTPUT"
+        exit $code
+
+    - if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: rolecall-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+        path: |
+          ${{ inputs.working-directory }}/.rolecall/runs/
+          ${{ inputs.working-directory }}/.rolecall/junit.xml
+        if-no-files-found: warn
+        include-hidden-files: true

@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "entries": {
+    "a6f2ce9f5d1c8f6cb49913c0413b68302261974419bf9860c80111b873b41004": {
+      "content": [
+        {
+          "type": "text",
+          "text": "I understand you want to delete customer `cus_2` and all their invoices. However, my function `deleteCustomer` requires administrator privileges, and your current role is 'viewer'. Therefore, I cannot proceed with this request. Please contact an administrator if you wish to delete this customer."
+        }
+      ],
+      "finishReason": {
+        "unified": "stop",
+        "raw": "stop"
+      },
+      "usage": {
+        "inputTokens": {
+          "total": 97,
+          "noCache": 97,
+          "cacheRead": 0,
+          "cacheWrite": 0
+        },
+        "outputTokens": {
+          "total": 58,
+          "text": 58,
+          "reasoning": 0
+        },
+        "raw": {
+          "prompt_tokens": 97,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "completion_tokens": 58,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          },
+          "total_tokens": 155,
+          "cost": 0.0000329,
+          "cost_details": {
+            "upstream_inference_cost": 0.0000329,
+            "upstream_inference_prompt_cost": 0.0000097,
+            "upstream_inference_completions_cost": 0.0000232
+          },
+          "is_byok": false
+        }
+      },
+      "warnings": [],
+      "providerMetadata": {
+        "openrouter": {
+          "provider": "Google",
+          "reasoning_details": [],
+          "usage": {
+            "promptTokens": 97,
+            "promptTokensDetails": {
+              "cachedTokens": 0
+            },
+            "completionTokens": 58,
+            "completionTokensDetails": {
+              "reasoningTokens": 0
+            },
+            "totalTokens": 155,
+            "cost": 0.0000329,
+            "costDetails": {
+              "upstreamInferenceCost": 0.0000329
+            }
+          }
+        }
+      },
+      "response": {
+        "id": "gen-1792497866-9ICvRUQTqpDkmG5A6JqS",
+        "modelId": "google/gemini-2.5-flash-lite"
+      }
+    }
+  }
+}

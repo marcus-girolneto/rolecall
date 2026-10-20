@@ -1,0 +1,163 @@
+@import "tailwindcss";
+
+/*
+ * Tokens. Dark is the default theme; light is selected via [data-theme="light"].
+ * Status colors are reserved (pass / warn / error / fail) and always ship with an icon + label.
+ * Light-mode status steps were validated for CVD separation against #FFFFFF.
+ */
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0d0e13;
+  --surface: #14151c;
+  --surface-2: #1a1c25;
+  --surface-3: #22242f;
+  --border: #252734;
+  --border-strong: #343747;
+  --text: #ecedf3;
+  --text-2: #a9abbd;
+  --text-3: #767990;
+  --accent: #7c5cff;
+  --accent-text: #a995ff;
+  --pass: #3ddc97;
+  --warn: #ffb020;
+  --error: #d46bd8;
+  --fail: #ff5a5f;
+  --ink: #12131a;
+  --shadow: 0 1px 0 rgb(255 255 255 / 0.02) inset, 0 12px 32px -12px rgb(0 0 0 / 0.6);
+  --scrim: rgb(5 6 10 / 0.6);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f6f6f9;
+  --surface: #ffffff;
+  --surface-2: #f3f3f7;
+  --surface-3: #e9e9f0;
+  --border: #e3e4ec;
+  --border-strong: #cfd1dc;
+  --text: #12131a;
+  --text-2: #4b4e60;
+  --text-3: #6f7286;
+  --accent: #6a48f5;
+  --accent-text: #5a37e8;
+  --pass: #0f9f68;
+  --warn: #e0a100;
+  --error: #a43bb0;
+  --fail: #c8202e;
+  --ink: #12131a;
+  --shadow: 0 1px 2px rgb(18 19 26 / 0.04), 0 12px 32px -16px rgb(18 19 26 / 0.18);
+  --scrim: rgb(18 19 26 / 0.32);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-fg: var(--text);
+  --color-fg-2: var(--text-2);
+  --color-fg-3: var(--text-3);
+  --color-accent: var(--accent);
+  --color-accent-text: var(--accent-text);
+  --color-pass: var(--pass);
+  --color-warn: var(--warn);
+  --color-error: var(--error);
+  --color-fail: var(--fail);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+@layer base {
+html,
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--accent) 35%, transparent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.code-block {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.6;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  white-space: pre;
+  overflow: auto;
+  max-height: 320px;
+}
+
+}
+
+@keyframes rc-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes rc-slide-in {
+  from { transform: translateX(24px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes rc-pop {
+  from { transform: translateY(4px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.anim-fade { animation: rc-fade-in 160ms ease-out; }
+.anim-slide { animation: rc-slide-in 200ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+.anim-pop { animation: rc-pop 140ms ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .status-mark { forced-color-adjust: none; }
+}

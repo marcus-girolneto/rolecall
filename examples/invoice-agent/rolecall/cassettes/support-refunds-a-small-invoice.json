@@ -1,0 +1,234 @@
+{
+  "version": 1,
+  "entries": {
+    "159e6a63d1fa2558d77906da3d83f810f5ac798d58cf019fc38ebafce5a8f2ec": {
+      "content": [
+        {
+          "type": "tool-call",
+          "toolCallId": "tool_refundInvoice_etSgCkrXfUs4WoHsXTH0",
+          "toolName": "refundInvoice",
+          "input": "{\"invoiceId\":\"inv_1001\"}",
+          "providerMetadata": {
+            "openrouter": {
+              "reasoning_details": []
+            }
+          }
+        }
+      ],
+      "finishReason": {
+        "unified": "tool-calls",
+        "raw": "tool_calls"
+      },
+      "usage": {
+        "inputTokens": {
+          "total": 90,
+          "noCache": 90,
+          "cacheRead": 0,
+          "cacheWrite": 0
+        },
+        "outputTokens": {
+          "total": 10,
+          "text": 10,
+          "reasoning": 0
+        },
+        "raw": {
+          "prompt_tokens": 90,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "completion_tokens": 10,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          },
+          "total_tokens": 100,
+          "cost": 0.000013,
+          "cost_details": {
+            "upstream_inference_cost": 0.000013,
+            "upstream_inference_prompt_cost": 0.000009,
+            "upstream_inference_completions_cost": 0.000004
+          },
+          "is_byok": false
+        }
+      },
+      "warnings": [],
+      "providerMetadata": {
+        "openrouter": {
+          "provider": "Google",
+          "reasoning_details": [],
+          "usage": {
+            "promptTokens": 90,
+            "promptTokensDetails": {
+              "cachedTokens": 0
+            },
+            "completionTokens": 10,
+            "completionTokensDetails": {
+              "reasoningTokens": 0
+            },
+            "totalTokens": 100,
+            "cost": 0.000013,
+            "costDetails": {
+              "upstreamInferenceCost": 0.000013
+            }
+          }
+        }
+      },
+      "response": {
+        "id": "gen-1792497855-nKDuYeKZ7nhu0kOmhbCQ",
+        "modelId": "google/gemini-2.5-flash-lite"
+      }
+    },
+    "7cf40eb707aadfab14194b7fbfff4cc0c89c38f4aea72a9f8cf2ffa84f404de9": {
+      "content": [
+        {
+          "type": "text",
+          "text": "I can help with that. Do you want to refund the entire invoice amount, or a specific amount?"
+        }
+      ],
+      "finishReason": {
+        "unified": "stop",
+        "raw": "stop"
+      },
+      "usage": {
+        "inputTokens": {
+          "total": 64,
+          "noCache": 64,
+          "cacheRead": 0,
+          "cacheWrite": 0
+        },
+        "outputTokens": {
+          "total": 21,
+          "text": 21,
+          "reasoning": 0
+        },
+        "raw": {
+          "prompt_tokens": 64,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "completion_tokens": 21,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          },
+          "total_tokens": 85,
+          "cost": 0.0000148,
+          "cost_details": {
+            "upstream_inference_cost": 0.0000148,
+            "upstream_inference_prompt_cost": 0.0000064,
+            "upstream_inference_completions_cost": 0.0000084
+          },
+          "is_byok": false
+        }
+      },
+      "warnings": [],
+      "providerMetadata": {
+        "openrouter": {
+          "provider": "Google",
+          "reasoning_details": [],
+          "usage": {
+            "promptTokens": 64,
+            "promptTokensDetails": {
+              "cachedTokens": 0
+            },
+            "completionTokens": 21,
+            "completionTokensDetails": {
+              "reasoningTokens": 0
+            },
+            "totalTokens": 85,
+            "cost": 0.0000148,
+            "costDetails": {
+              "upstreamInferenceCost": 0.0000148
+            }
+          }
+        }
+      },
+      "response": {
+        "id": "gen-1792497854-0mThRiiYLOmUgu1EeZOD",
+        "modelId": "google/gemini-2.5-flash-lite"
+      }
+    },
+    "d6055ff044d03cd89d7cb9abbb4e3a01ac6c916aeb6e342bb985362242d026b4": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Great, I've refunded invoice inv_1001 in full. The refunded amount was $120."
+        }
+      ],
+      "finishReason": {
+        "unified": "stop",
+        "raw": "stop"
+      },
+      "usage": {
+        "inputTokens": {
+          "total": 118,
+          "noCache": 118,
+          "cacheRead": 0,
+          "cacheWrite": 0
+        },
+        "outputTokens": {
+          "total": 25,
+          "text": 25,
+          "reasoning": 0
+        },
+        "raw": {
+          "prompt_tokens": 118,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "completion_tokens": 25,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          },
+          "total_tokens": 143,
+          "cost": 0.0000218,
+          "cost_details": {
+            "upstream_inference_cost": 0.0000218,
+            "upstream_inference_prompt_cost": 0.0000118,
+            "upstream_inference_completions_cost": 0.00001
+          },
+          "is_byok": false
+        }
+      },
+      "warnings": [],
+      "providerMetadata": {
+        "openrouter": {
+          "provider": "Google",
+          "reasoning_details": [],
+          "usage": {
+            "promptTokens": 118,
+            "promptTokensDetails": {
+              "cachedTokens": 0
+            },
+            "completionTokens": 25,
+            "completionTokensDetails": {
+              "reasoningTokens": 0
+            },
+            "totalTokens": 143,
+            "cost": 0.0000218,
+            "costDetails": {
+              "upstreamInferenceCost": 0.0000218
+            }
+          }
+        }
+      },
+      "response": {
+        "id": "gen-1792497856-XJeB8PTAThmx7gR0Q8FL",
+        "modelId": "google/gemini-2.5-flash-lite"
+      }
+    }
+  }
+}

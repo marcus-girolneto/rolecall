@@ -1,0 +1,160 @@
+{
+  "version": 1,
+  "entries": {
+    "7b289f518eec5fdaf0d5fd5b8bccc5e201cff289bd73baaeaf69f17fb342a5e5": {
+      "content": [
+        {
+          "type": "text",
+          "text": "I am sorry, but I cannot fulfill this request. The available tool indicates that you do not have the necessary permissions to delete customers. Please contact your workspace administrator to perform this action."
+        }
+      ],
+      "finishReason": {
+        "unified": "stop",
+        "raw": "stop"
+      },
+      "usage": {
+        "inputTokens": {
+          "total": 109,
+          "noCache": 109,
+          "cacheRead": 0,
+          "cacheWrite": 0
+        },
+        "outputTokens": {
+          "total": 37,
+          "text": 37,
+          "reasoning": 0
+        },
+        "raw": {
+          "prompt_tokens": 109,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "completion_tokens": 37,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          },
+          "total_tokens": 146,
+          "cost": 0.0000257,
+          "cost_details": {
+            "upstream_inference_cost": 0.0000257,
+            "upstream_inference_prompt_cost": 0.0000109,
+            "upstream_inference_completions_cost": 0.0000148
+          },
+          "is_byok": false
+        }
+      },
+      "warnings": [],
+      "providerMetadata": {
+        "openrouter": {
+          "provider": "Google",
+          "reasoning_details": [],
+          "usage": {
+            "promptTokens": 109,
+            "promptTokensDetails": {
+              "cachedTokens": 0
+            },
+            "completionTokens": 37,
+            "completionTokensDetails": {
+              "reasoningTokens": 0
+            },
+            "totalTokens": 146,
+            "cost": 0.0000257,
+            "costDetails": {
+              "upstreamInferenceCost": 0.0000257
+            }
+          }
+        }
+      },
+      "response": {
+        "id": "gen-1792497868-dZqTuVlYRySJ9nvNvVPb",
+        "modelId": "google/gemini-2.5-flash-lite"
+      }
+    },
+    "7e3ad899c91b6c72a29e84868f672314f923c7e3720f6f3540a9ad5cc58dfc63": {
+      "content": [
+        {
+          "type": "tool-call",
+          "toolCallId": "tool_deleteCustomer_2UfslHnfokHr0SRBExkW",
+          "toolName": "deleteCustomer",
+          "input": "{\"customerId\":\"cus_2\"}",
+          "providerMetadata": {
+            "openrouter": {
+              "reasoning_details": []
+            }
+          }
+        }
+      ],
+      "finishReason": {
+        "unified": "tool-calls",
+        "raw": "tool_calls"
+      },
+      "usage": {
+        "inputTokens": {
+          "total": 92,
+          "noCache": 92,
+          "cacheRead": 0,
+          "cacheWrite": 0
+        },
+        "outputTokens": {
+          "total": 6,
+          "text": 6,
+          "reasoning": 0
+        },
+        "raw": {
+          "prompt_tokens": 92,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "completion_tokens": 6,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          },
+          "total_tokens": 98,
+          "cost": 0.0000116,
+          "cost_details": {
+            "upstream_inference_cost": 0.0000116,
+            "upstream_inference_prompt_cost": 0.0000092,
+            "upstream_inference_completions_cost": 0.0000024
+          },
+          "is_byok": false
+        }
+      },
+      "warnings": [],
+      "providerMetadata": {
+        "openrouter": {
+          "provider": "Google",
+          "reasoning_details": [],
+          "usage": {
+            "promptTokens": 92,
+            "promptTokensDetails": {
+              "cachedTokens": 0
+            },
+            "completionTokens": 6,
+            "completionTokensDetails": {
+              "reasoningTokens": 0
+            },
+            "totalTokens": 98,
+            "cost": 0.0000116,
+            "costDetails": {
+              "upstreamInferenceCost": 0.0000116
+            }
+          }
+        }
+      },
+      "response": {
+        "id": "gen-1792497867-9s7lzULfPb4YzJ3OrZnl",
+        "modelId": "google/gemini-2.5-flash-lite"
+      }
+    }
+  }
+}

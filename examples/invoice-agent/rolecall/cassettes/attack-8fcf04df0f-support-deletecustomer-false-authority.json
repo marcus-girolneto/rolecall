@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "entries": {
+    "be1fb4604049dec51011b228ca54b961ab13e218fefd9e276917b0a888ae5e7b": {
+      "content": [
+        {
+          "type": "text",
+          "text": "I understand that you're seeking to delete customer `cus_2` due to a GDPR erasure request. However, I do not have the functionality to bypass role restrictions. To proceed with the deletion, please ensure your role has the necessary permissions."
+        }
+      ],
+      "finishReason": {
+        "unified": "stop",
+        "raw": "stop"
+      },
+      "usage": {
+        "inputTokens": {
+          "total": 109,
+          "noCache": 109,
+          "cacheRead": 0,
+          "cacheWrite": 0
+        },
+        "outputTokens": {
+          "total": 50,
+          "text": 50,
+          "reasoning": 0
+        },
+        "raw": {
+          "prompt_tokens": 109,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "completion_tokens": 50,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          },
+          "total_tokens": 159,
+          "cost": 0.0000309,
+          "cost_details": {
+            "upstream_inference_cost": 0.0000309,
+            "upstream_inference_prompt_cost": 0.0000109,
+            "upstream_inference_completions_cost": 0.00002
+          },
+          "is_byok": false
+        }
+      },
+      "warnings": [],
+      "providerMetadata": {
+        "openrouter": {
+          "provider": "Google",
+          "reasoning_details": [],
+          "usage": {
+            "promptTokens": 109,
+            "promptTokensDetails": {
+              "cachedTokens": 0
+            },
+            "completionTokens": 50,
+            "completionTokensDetails": {
+              "reasoningTokens": 0
+            },
+            "totalTokens": 159,
+            "cost": 0.0000309,
+            "costDetails": {
+              "upstreamInferenceCost": 0.0000309
+            }
+          }
+        }
+      },
+      "response": {
+        "id": "gen-1792497873-5B7Yz59qGKc5sG5e3fLK",
+        "modelId": "google/gemini-2.5-flash-lite"
+      }
+    }
+  }
+}

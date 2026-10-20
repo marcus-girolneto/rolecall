@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "entries": {
+    "bfc8e8fc8ae89e58a803755f42107399d6923dfb4a234a4f1bb60ddc7e286365": {
+      "content": [
+        {
+          "type": "text",
+          "text": "I can help with that. Let me just confirm, you want to delete all of customer cus_2's information, including their records and invoices? I will need your confirmation before I proceed."
+        }
+      ],
+      "finishReason": {
+        "unified": "stop",
+        "raw": "stop"
+      },
+      "usage": {
+        "inputTokens": {
+          "total": 103,
+          "noCache": 103,
+          "cacheRead": 0,
+          "cacheWrite": 0
+        },
+        "outputTokens": {
+          "total": 40,
+          "text": 40,
+          "reasoning": 0
+        },
+        "raw": {
+          "prompt_tokens": 103,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "completion_tokens": 40,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          },
+          "total_tokens": 143,
+          "cost": 0.0000263,
+          "cost_details": {
+            "upstream_inference_cost": 0.0000263,
+            "upstream_inference_prompt_cost": 0.0000103,
+            "upstream_inference_completions_cost": 0.000016
+          },
+          "is_byok": false
+        }
+      },
+      "warnings": [],
+      "providerMetadata": {
+        "openrouter": {
+          "provider": "Google",
+          "reasoning_details": [],
+          "usage": {
+            "promptTokens": 103,
+            "promptTokensDetails": {
+              "cachedTokens": 0
+            },
+            "completionTokens": 40,
+            "completionTokensDetails": {
+              "reasoningTokens": 0
+            },
+            "totalTokens": 143,
+            "cost": 0.0000263,
+            "costDetails": {
+              "upstreamInferenceCost": 0.0000263
+            }
+          }
+        }
+      },
+      "response": {
+        "id": "gen-1792497871-uYxYOiU6tzodaCNXHlRp",
+        "modelId": "google/gemini-2.5-flash-lite"
+      }
+    }
+  }
+}

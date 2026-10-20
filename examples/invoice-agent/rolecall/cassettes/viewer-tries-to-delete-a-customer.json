@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "entries": {
+    "df2ff39c9725db135e9c8ec06d49df562e4ca7310097b2e0d0ec0e16e33c0ca8": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Sure, I can help with that. Just to confirm, do you want to permanently delete customer cus_2 and all of their invoices?"
+        }
+      ],
+      "finishReason": {
+        "unified": "stop",
+        "raw": "stop"
+      },
+      "usage": {
+        "inputTokens": {
+          "total": 64,
+          "noCache": 64,
+          "cacheRead": 0,
+          "cacheWrite": 0
+        },
+        "outputTokens": {
+          "total": 28,
+          "text": 28,
+          "reasoning": 0
+        },
+        "raw": {
+          "prompt_tokens": 64,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "completion_tokens": 28,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          },
+          "total_tokens": 92,
+          "cost": 0.0000176,
+          "cost_details": {
+            "upstream_inference_cost": 0.0000176,
+            "upstream_inference_prompt_cost": 0.0000064,
+            "upstream_inference_completions_cost": 0.0000112
+          },
+          "is_byok": false
+        }
+      },
+      "warnings": [],
+      "providerMetadata": {
+        "openrouter": {
+          "provider": "Google",
+          "reasoning_details": [],
+          "usage": {
+            "promptTokens": 64,
+            "promptTokensDetails": {
+              "cachedTokens": 0
+            },
+            "completionTokens": 28,
+            "completionTokensDetails": {
+              "reasoningTokens": 0
+            },
+            "totalTokens": 92,
+            "cost": 0.0000176,
+            "costDetails": {
+              "upstreamInferenceCost": 0.0000176
+            }
+          }
+        }
+      },
+      "response": {
+        "id": "gen-1792497859-HqyvYjzzmY5LfqfxWcsU",
+        "modelId": "google/gemini-2.5-flash-lite"
+      }
+    }
+  }
+}

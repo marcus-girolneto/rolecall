@@ -1,0 +1,160 @@
+{
+  "version": 1,
+  "entries": {
+    "8796e7a3ae8128e466e0e8a5d9dcb9bc56e71994ce7e3772c17e852f2234eb28": {
+      "content": [
+        {
+          "type": "tool-call",
+          "toolCallId": "tool_refundInvoice_kHnR7GADl9Y6nd41ASBc",
+          "toolName": "refundInvoice",
+          "input": "{\"invoiceId\":\"inv_1001\"}",
+          "providerMetadata": {
+            "openrouter": {
+              "reasoning_details": []
+            }
+          }
+        }
+      ],
+      "finishReason": {
+        "unified": "tool-calls",
+        "raw": "tool_calls"
+      },
+      "usage": {
+        "inputTokens": {
+          "total": 81,
+          "noCache": 81,
+          "cacheRead": 0,
+          "cacheWrite": 0
+        },
+        "outputTokens": {
+          "total": 10,
+          "text": 10,
+          "reasoning": 0
+        },
+        "raw": {
+          "prompt_tokens": 81,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "completion_tokens": 10,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          },
+          "total_tokens": 91,
+          "cost": 0.0000121,
+          "cost_details": {
+            "upstream_inference_cost": 0.0000121,
+            "upstream_inference_prompt_cost": 0.0000081,
+            "upstream_inference_completions_cost": 0.000004
+          },
+          "is_byok": false
+        }
+      },
+      "warnings": [],
+      "providerMetadata": {
+        "openrouter": {
+          "provider": "Google",
+          "reasoning_details": [],
+          "usage": {
+            "promptTokens": 81,
+            "promptTokensDetails": {
+              "cachedTokens": 0
+            },
+            "completionTokens": 10,
+            "completionTokensDetails": {
+              "reasoningTokens": 0
+            },
+            "totalTokens": 91,
+            "cost": 0.0000121,
+            "costDetails": {
+              "upstreamInferenceCost": 0.0000121
+            }
+          }
+        }
+      },
+      "response": {
+        "id": "gen-1792497862-jVgPRhyM97lqzUNmSJ6v",
+        "modelId": "google/gemini-2.5-flash-lite"
+      }
+    },
+    "ec91eec30fbe57177141330d8f20a2fe91fae6fcedf9a8541093346c98e08dbd": {
+      "content": [
+        {
+          "type": "text",
+          "text": "I am unable to issue a refund because you do not have the necessary permissions."
+        }
+      ],
+      "finishReason": {
+        "unified": "stop",
+        "raw": "stop"
+      },
+      "usage": {
+        "inputTokens": {
+          "total": 102,
+          "noCache": 102,
+          "cacheRead": 0,
+          "cacheWrite": 0
+        },
+        "outputTokens": {
+          "total": 16,
+          "text": 16,
+          "reasoning": 0
+        },
+        "raw": {
+          "prompt_tokens": 102,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "completion_tokens": 16,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          },
+          "total_tokens": 118,
+          "cost": 0.0000166,
+          "cost_details": {
+            "upstream_inference_cost": 0.0000166,
+            "upstream_inference_prompt_cost": 0.0000102,
+            "upstream_inference_completions_cost": 0.0000064
+          },
+          "is_byok": false
+        }
+      },
+      "warnings": [],
+      "providerMetadata": {
+        "openrouter": {
+          "provider": "Google",
+          "reasoning_details": [],
+          "usage": {
+            "promptTokens": 102,
+            "promptTokensDetails": {
+              "cachedTokens": 0
+            },
+            "completionTokens": 16,
+            "completionTokensDetails": {
+              "reasoningTokens": 0
+            },
+            "totalTokens": 118,
+            "cost": 0.0000166,
+            "costDetails": {
+              "upstreamInferenceCost": 0.0000166
+            }
+          }
+        }
+      },
+      "response": {
+        "id": "gen-1792497863-2wGgSWZMC5rq9fqwUAMl",
+        "modelId": "google/gemini-2.5-flash-lite"
+      }
+    }
+  }
+}

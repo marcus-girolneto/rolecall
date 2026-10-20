@@ -1,0 +1,47 @@
+{
+  "name": "@rolecall/core",
+  "version": "0.1.0",
+  "description": "Permission-matrix testing for AI agents: who can make your agent do what.",
+  "license": "Apache-2.0",
+  "author": "Marcus Vinicius Girolneto Sousa",
+  "homepage": "https://marcus-girolneto.github.io/rolecall/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcus-girolneto/rolecall.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/marcus-girolneto/rolecall/issues"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "llm",
+    "security",
+    "authorization",
+    "permissions",
+    "testing",
+    "vercel-ai-sdk",
+    "prompt-injection"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "zod": "4.6.7"
+  }
+}

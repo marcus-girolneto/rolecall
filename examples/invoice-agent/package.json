@@ -1,0 +1,17 @@
+{
+  "name": "invoice-agent-example",
+  "private": true,
+  "type": "module",
+  "description": "Demo: a small invoice-support agent with one deliberately planted authorization bug. All data is simulated.",
+  "scripts": {
+    "rolecall": "rolecall run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@rolecall/ai-sdk": "workspace:*",
+    "@rolecall/core": "workspace:*",
+    "ai": "7.0.145",
+    "zod": "4.6.7"
+  },
+  "devDependencies": { "rolecall": "workspace:*" }
+}

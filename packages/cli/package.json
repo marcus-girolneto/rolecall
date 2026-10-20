@@ -1,0 +1,53 @@
+{
+  "name": "rolecall",
+  "version": "0.1.0",
+  "description": "Rolecall CLI: run permission-matrix tests for AI agents, verify evidence bundles, open the dashboard.",
+  "license": "Apache-2.0",
+  "author": "Marcus Vinicius Girolneto Sousa",
+  "homepage": "https://marcus-girolneto.github.io/rolecall/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcus-girolneto/rolecall.git",
+    "directory": "packages/cli"
+  },
+  "bugs": {
+    "url": "https://github.com/marcus-girolneto/rolecall/issues"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "llm",
+    "security",
+    "authorization",
+    "permissions",
+    "testing",
+    "vercel-ai-sdk",
+    "prompt-injection"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "type": "module",
+  "bin": {
+    "rolecall": "./bin/rolecall.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "bin"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node scripts/copy-ui.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@rolecall/core": "workspace:*",
+    "cac": "7.1.0",
+    "jiti": "2.7.0"
+  }
+}
