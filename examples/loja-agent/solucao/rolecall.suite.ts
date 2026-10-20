@@ -8,7 +8,10 @@ import { createTools } from './src/ferramentas.js';
 
 // Com a chave do OpenRouter no .env, o Rolecall também conversa com o chatbot de verdade (seção scenarios).
 const modelo = process.env.OPENROUTER_API_KEY
-  ? openRouterModel(process.env.LOJA_MODELO ?? 'google/gemini-2.5-flash-lite')
+  ? openRouterModel(
+      process.env.LOJA_MODELO ??
+        'google/gemini-2.5-flash-lite,deepseek/deepseek-v4.1-flash,openai/gpt-oss-120b',
+    )
   : undefined;
 
 export default defineSuite<Loja, Usuario>({

@@ -42,8 +42,13 @@ pnpm conversar cliente      # ou: atendente, gerente
 Você está logado como a Ana. Tente: *"quais são meus pedidos?"*, *"quero reembolso do P-100"*, *"cancela o P-200"*.
 As linhas com 🔧 mostram a ferramenta que o chatbot chamou e ⛔ quando o código recusou.
 
-Repare: o P-200 é do Diego, e mesmo assim a Ana consegue cancelá-lo. É esse tipo de falha que o Rolecall acha
-sozinho, antes de um cliente de verdade.
+Peça *"cancela o pedido P-200"*. O P-200 é do Diego. Às vezes o chatbot cancela; às vezes ele consulta o pedido
+antes (com `verPedido`, que tem a checagem certa) e recusa. **Nos dois casos o bug está lá**: o `cancelarPedido` não
+confere de quem é o pedido, e quem decidiu foi só a IA, desta vez. Uma IA não é previsível; o código precisa ser. É
+por isso que o Rolecall testa o código diretamente, além de conversar com o chatbot.
+
+Se aparecer *"o provedor do modelo está congestionado"*, espere alguns segundos e mande de novo. O `LOJA_MODELO` no
+`.env` já tem modelos reserva separados por vírgula, usados automaticamente quando o primeiro está ocupado.
 
 ## 2. Diga ao Rolecall quem pode fazer o quê
 

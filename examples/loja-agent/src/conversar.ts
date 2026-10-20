@@ -24,7 +24,9 @@ if (!usuario) {
   process.exit(1);
 }
 
-const modelo = openRouterModel(process.env.LOJA_MODELO ?? 'google/gemini-2.5-flash-lite');
+const modelo = openRouterModel(
+  process.env.LOJA_MODELO ?? 'google/gemini-2.5-flash-lite,deepseek/deepseek-v4.1-flash,openai/gpt-oss-120b',
+);
 const loja = new Loja();
 const conversa: ModelMessage[] = [];
 const rl = createInterface({ input: process.stdin, output: process.stdout });
@@ -58,7 +60,12 @@ for (;;) {
     conversa.push(...mensagens);
     console.log(`bot  > ${resposta}\n`);
   } catch (e) {
-    console.log(`(erro: ${e instanceof Error ? e.message : String(e)})\n`);
+    const msg = e instanceof Error ? e.message : String(e);
+    console.log(
+      /rate.?limit|429|too many requests/i.test(msg)
+        ? '(o provedor do modelo está congestionado agora; espere alguns segundos e mande de novo, ou ponha um modelo reserva em LOJA_MODELO)\n'
+        : `(erro: ${msg})\n`,
+    );
   }
 }
 rl.close();

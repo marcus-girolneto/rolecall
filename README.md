@@ -250,7 +250,7 @@ Conversations (`scenarios`) run your actual agent loop through the AI SDK and in
 import { aiSdkAgent, openRouterModel } from '@rolecall/ai-sdk';
 
 agent: aiSdkAgent({
-  model: openRouterModel('google/gemini-2.5-flash-lite'),   // or any AI SDK model object
+  model: openRouterModel('google/gemini-2.5-flash-lite,deepseek/deepseek-v4.1-flash'), // comma = fallbacks; or any AI SDK model
   tools: (store, user) => createTools(store, user),
   instructions: (user) => `You help ${user.role} users manage invoices.`,
 }),
